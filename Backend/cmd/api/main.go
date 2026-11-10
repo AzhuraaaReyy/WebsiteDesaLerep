@@ -1,3 +1,9 @@
+// Package main adalah entrypoint Go API Website Desa Lerep.
+//
+//	@title			Website Desa Lerep API
+//	@version		1.0
+//	@description	API Website Desa Lerep. Semua respons memakai envelope {success, message, data} atau {success, message, errors}. Timestamp dalam UTC (tampilkan Asia/Jakarta); tanggal tanpa waktu berformat YYYY-MM-DD. Field *_path adalah path Supabase Storage, bukan URL siap pakai.
+//	@BasePath		/api/v1
 package main
 
 import (
@@ -30,7 +36,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:              ":" + cfg.Port,
-		Handler:           router.New(pool),
+		Handler:           router.New(pool, router.Options{CORSAllowedOrigins: cfg.CORSAllowedOrigins}),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       15 * time.Second,
 		WriteTimeout:      30 * time.Second,

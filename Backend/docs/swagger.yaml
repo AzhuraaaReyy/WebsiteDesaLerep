@@ -1,0 +1,229 @@
+basePath: /api/v1
+definitions:
+  response.ErrorEnvelope:
+    properties:
+      errors:
+        type: object
+      message:
+        example: Terjadi kesalahan
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  village.Hamlet:
+    properties:
+      address:
+        type: string
+      description:
+        type: string
+      head_of_hamlet:
+        $ref: '#/definitions/village.OfficialSummary'
+      id:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      name:
+        type: string
+      photo_path:
+        type: string
+    type: object
+  village.HamletSummary:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  village.Official:
+    properties:
+      duties:
+        type: string
+      full_name:
+        type: string
+      hamlet:
+        $ref: '#/definitions/village.HamletSummary'
+      id:
+        type: string
+      parent_official_id:
+        type: string
+      photo_path:
+        type: string
+      position:
+        type: string
+      public_contact:
+        type: string
+      sort_order:
+        type: integer
+      term_end_date:
+        description: format YYYY-MM-DD
+        type: string
+      term_start_date:
+        description: format YYYY-MM-DD
+        type: string
+    type: object
+  village.OfficialSummary:
+    properties:
+      full_name:
+        type: string
+      id:
+        type: string
+      position:
+        type: string
+    type: object
+  village.VillageProfile:
+    properties:
+      address:
+        type: string
+      district_name:
+        type: string
+      email:
+        type: string
+      history:
+        type: string
+      id:
+        type: string
+      mission:
+        type: string
+      office_hours:
+        type: object
+      phone:
+        type: string
+      postal_code:
+        type: string
+      province_name:
+        type: string
+      regency_name:
+        type: string
+      updated_at:
+        type: string
+      village_code:
+        type: string
+      village_name:
+        type: string
+      vision:
+        type: string
+      website_url:
+        type: string
+    type: object
+  village.hamletsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/village.Hamlet'
+        type: array
+      message:
+        example: Daftar dusun berhasil diambil
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+  village.officialsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/village.Official'
+        type: array
+      message:
+        example: Daftar perangkat desa berhasil diambil
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+  village.profileResponse:
+    properties:
+      data:
+        $ref: '#/definitions/village.VillageProfile'
+      message:
+        example: Profil desa berhasil diambil
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+info:
+  contact: {}
+  description: API Website Desa Lerep. Semua respons memakai envelope {success, message,
+    data} atau {success, message, errors}. Timestamp dalam UTC (tampilkan Asia/Jakarta);
+    tanggal tanpa waktu berformat YYYY-MM-DD. Field *_path adalah path Supabase Storage,
+    bukan URL siap pakai.
+  title: Website Desa Lerep API
+  version: "1.0"
+paths:
+  /hamlets:
+    get:
+      description: Dusun aktif, urut nama. `latitude`/`longitude` selalu sama-sama
+        null atau sama-sama terisi. `head_of_hamlet` bisa null.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/village.hamletsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorEnvelope'
+        "503":
+          description: Database belum dikonfigurasi
+          schema:
+            $ref: '#/definitions/response.ErrorEnvelope'
+      summary: Daftar dusun
+      tags:
+      - Profil Desa
+  /village-officials:
+    get:
+      description: Perangkat desa aktif, urut `sort_order`. Bagan struktur organisasi
+        disusun dari `parent_official_id` (null = paling atas). `hamlet` hanya terisi
+        untuk perangkat tingkat dusun. Tanggal berformat YYYY-MM-DD.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/village.officialsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorEnvelope'
+        "503":
+          description: Database belum dikonfigurasi
+          schema:
+            $ref: '#/definitions/response.ErrorEnvelope'
+      summary: Daftar perangkat desa
+      tags:
+      - Profil Desa
+  /village-profile:
+    get:
+      description: 'Profil desa (singleton). Field kosong bernilai null. `office_hours`:
+        key nama hari huruf kecil (senin..minggu), null berarti tutup; urutan key
+        tidak dijamin. `updated_at` dalam UTC.'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/village.profileResponse'
+        "404":
+          description: Profil desa belum tersedia
+          schema:
+            $ref: '#/definitions/response.ErrorEnvelope'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorEnvelope'
+        "503":
+          description: Database belum dikonfigurasi
+          schema:
+            $ref: '#/definitions/response.ErrorEnvelope'
+      summary: Profil desa
+      tags:
+      - Profil Desa
+swagger: "2.0"
