@@ -3,10 +3,10 @@
 # WEBSITE DESA LEREP
 
 **Lokasi:** Desa Lerep, Kecamatan Ungaran Barat, Kabupaten Semarang, Jawa Tengah  
-**Versi:** 1.0 — Final  
-**Tanggal:** 8 November 2026  
+**Versi:** 1.1 — Final (Sinkronisasi)  
+**Tanggal:** 8 November 2026 (revisi sinkronisasi 10 November 2026)  
 **Status:** FINAL — LOCKED  
-**Acuan:** PRD v1.0 Final + 70 Keputusan Arsitektur + PRD–Architecture Consistency Review  
+**Acuan:** PRD v1.1 Final + 70 Keputusan Arsitektur (Q1–Q70) + AR-01–AR-20 + Sinkronisasi PRD–Architecture–Schema  
 **Strategi:** Evaluation-First, Production-Ready Later  
 **Target Deployment Evaluasi:** 22 November 2026
 
@@ -319,6 +319,8 @@ Tidak membuat aplikasi mobile terpisah.
 
 Tidak membuat accessibility panel khusus pada tahap evaluasi.
 
+Fitur cetak halaman (P1) menggunakan print stylesheet CSS tanpa library tambahan.
+
 ## 4.9 Image Handling
 
 Menggunakan Next.js Image.
@@ -340,6 +342,7 @@ Mencakup:
 - Sitemap.
 - Robots.
 - Canonical URL.
+- Structured data (Schema Markup JSON-LD) untuk profil pemerintah desa, artikel berita, dan agenda kegiatan.
 - Struktur halaman yang mendukung indeksasi.
 
 Tidak menggunakan library SEO tambahan kecuali memang diperlukan.
@@ -358,7 +361,7 @@ Tidak menggunakan API untuk mempublikasikan konten secara otomatis ke media sosi
 
 ## 4.12 PWA
 
-PWA dasar disiapkan sesuai ruang lingkup PRD.
+PWA dasar berstatus P1 sesuai PRD v1.1 §13.2 dan tidak memblokir deployment evaluasi.
 
 Batasan:
 
@@ -658,6 +661,8 @@ Arsitektur disiapkan agar dapat dikembangkan menjadi RBAC.
 
 Frontend tidak boleh menjadi sumber kebenaran role atau hak akses.
 
+Wewenang menyetujui permohonan layanan tidak berasal dari role, melainkan dari mandat persetujuan yang berlaku (lihat §9.7 dan AR-11).
+
 ## 7.4 Resident Account
 
 Informasi publik tidak memerlukan login.
@@ -805,8 +810,13 @@ Audit log mencatat aktivitas penting, terutama:
 - Perubahan status.
 - Persetujuan dan penyelesaian layanan.
 - Penghapusan terkontrol.
+- Pemberian, pencabutan, dan penggunaan mandat persetujuan.
+- Penerapan gambar tanda tangan scan.
+- Pembuatan akses (signed URL) ke file privat, tanpa menyimpan URL-nya.
 
-Audit log tidak boleh menyimpan password, token, kode verifikasi, atau isi dokumen privat.
+Login dan logout admin tidak ditulis ulang oleh aplikasi; jejaknya diambil dari audit log Supabase Auth, yang dapat ditinjau melalui Supabase Dashboard atau dibaca backend untuk tampilan audit di dashboard admin (AR-18).
+
+Audit log tidak boleh menyimpan password, token, kode verifikasi, NIK, signed URL, atau isi dokumen privat.
 
 ## 8.11 Data Protection
 
@@ -815,7 +825,7 @@ Audit log tidak boleh menyimpan password, token, kode verifikasi, atau isi dokum
 - Validasi aplikasi.
 - Pembatasan akses.
 - Retensi data.
-- Enkripsi selektif pada tingkat aplikasi jika dibutuhkan.
+- Enkripsi selektif pada tingkat aplikasi. NIK yang dikumpulkan wajib dienkripsi (AES-256-GCM) dengan kunci yang hanya berada di environment server dan ditampilkan tersamar kepada admin (AR-16).
 - Tidak mengumpulkan NIK kecuali benar-benar diperlukan oleh layanan.
 
 ## 8.12 Date and Time
@@ -825,6 +835,10 @@ Audit log tidak boleh menyimpan password, token, kode verifikasi, atau isi dokum
 - Penyimpanan waktu menggunakan UTC.
 - Tampilan menggunakan zona waktu `Asia/Jakarta`.
 - Jadwal kegiatan dengan waktu pasti menggunakan `TIMESTAMPTZ`.
+
+## 8.13 Pembaruan `updated_at`
+
+Kolom `updated_at` diperbarui oleh repository Golang pada setiap query UPDATE (`SET updated_at = now()`). Tidak menggunakan trigger database pada tahap evaluasi (AR-15).
 
 ---
 
@@ -893,7 +907,7 @@ Status yang digunakan:
 8. Ditolak.
 9. Dibatalkan.
 
-Status Ditolak dan Dibatalkan harus disertai alasan.
+Status Ditolak dan Dibatalkan harus disertai alasan. Alasan tersebut disimpan sebagai catatan publik pada riwayat status sehingga dapat dilihat pemohon melalui pelacakan, dan ditegakkan dengan CHECK constraint database (AR-17).
 
 Status terkini disimpan pada tabel pengajuan.
 
@@ -909,10 +923,11 @@ Tabel konseptual:
 | ------------------ | ------------------------------ |
 | id                 | UUID                           |
 | service_request_id | Relasi pengajuan               |
-| previous_status    | Status sebelumnya              |
+| old_status         | Status sebelumnya              |
 | new_status         | Status baru                    |
 | changed_by         | Admin yang melakukan perubahan |
 | notes              | Catatan atau alasan            |
+| is_public          | Catatan boleh dilihat pemohon  |
 | created_at         | Waktu perubahan                |
 
 Perubahan status dan pencatatan riwayat wajib dilakukan dalam satu transaksi database.
@@ -940,6 +955,10 @@ Ketentuan:
 - Kode tidak dicatat dalam log.
 - Nomor tiket saja tidak cukup untuk membuka informasi pengajuan.
 - Dokumen privat tidak dapat diakses melalui endpoint tracking publik.
+- Kode verifikasi dibuat secara acak kriptografis (minimal 10 karakter alfanumerik tanpa karakter ambigu) dan disimpan sebagai HMAC-SHA256 dengan secret server (pepper) dari environment variable. Perbandingan dilakukan constant-time (AR-14).
+- Kolom hash bernama seragam `verification_code_hash` pada pengajuan, pengaduan, dan aspirasi.
+- Mekanisme yang sama berlaku untuk pengaduan (`POST /api/v1/complaints/track`) dan aspirasi (`POST /api/v1/aspirations/track`).
+- Respons untuk kombinasi tiket/kode yang salah bersifat generik.
 
 ## 9.6 Complaint Privacy
 
@@ -960,7 +979,18 @@ Statistik pengaduan dapat ditampilkan dalam bentuk agregat yang tidak mengungkap
 
 Dokumen PDF dapat dibuat setelah proses dan persetujuan yang berwenang.
 
-Gambar hasil scan tanda tangan hanya boleh digunakan setelah pejabat berwenang memberikan persetujuan.
+**Model persetujuan berbasis penunjukan langsung (AR-11).** Kepala Desa atau Carik menunjuk admin secara langsung, boleh lisan; surat mandat tidak wajib. Admin mencatat penunjukan itu satu kali di dashboard (tabel `service_approval_delegations`): pemberi penunjukan, tanggal mulai, cakupan layanan, izin tanda tangan scan, serta tanggal berakhir dan nomor surat bila ada. Tanggal berakhir kosong berarti berlaku sampai dicabut. Selama penunjukan berlaku dan belum dicabut, admin menyetujui atau menolak permohonan secara langsung tanpa keterlibatan pejabat per permohonan. Pejabat pemberi mandat tidak wajib memiliki akun.
+
+Saat admin mengambil keputusan, Golang memverifikasi dalam satu transaksi bahwa:
+
+- Akun admin adalah penerima mandat yang dirujuk.
+- Penunjukan sudah berlaku, belum berakhir (jika ada tanggal berakhir), dan belum dicabut.
+- Cakupan mandat mencakup layanan pada permohonan.
+- Tidak ada dua mandat aktif yang tumpang tindih untuk admin dan layanan yang sama.
+
+Keputusan, perubahan status, riwayat status, dan audit log ditulis dalam transaksi yang sama.
+
+Gambar hasil scan tanda tangan hanya boleh diterapkan setelah persetujuan tercatat dan hanya jika penunjukan yang menjadi dasar keputusan mencatat izin penggunaan tanda tangan scan.
 
 Gambar scan tanda tangan bukan Tanda Tangan Elektronik tersertifikasi.
 
@@ -1010,6 +1040,7 @@ Menggunakan Private Bucket dan Signed URL.
 - Masa berlaku awal yang direncanakan sekitar lima menit.
 - URL tidak boleh masuk ke log atau respons publik.
 - Signed URL tidak boleh dibagikan sebagai pengganti kontrol akses.
+- Setiap pembuatan signed URL untuk file privat dicatat di audit log (pengguna, entitas, waktu) tanpa menyimpan URL-nya.
 
 ## 10.5 File Validation
 
@@ -1037,7 +1068,7 @@ Menggunakan layered security:
 4. Authentication.
 5. Authorization.
 6. Rate limiting.
-7. CAPTCHA pada form yang rentan penyalahgunaan.
+7. CAPTCHA dan honeypot pada form publik.
 8. Input validation.
 9. Request size limits.
 10. Security headers.
@@ -1055,14 +1086,16 @@ Tidak menggunakan wildcard pada production untuk endpoint yang menggunakan crede
 Rate limiting diterapkan terutama pada:
 
 - Login.
-- Pelacakan pengajuan.
+- Pelacakan pengajuan, pengaduan, dan aspirasi.
 - Pengajuan layanan.
-- Form pengaduan.
+- Form pengaduan dan aspirasi.
 - Endpoint publik yang berisiko disalahgunakan.
 
 ## 11.4 CAPTCHA
 
 CAPTCHA digunakan pada form publik yang rentan spam atau penyalahgunaan.
+
+Seluruh form publik juga memakai field honeypot tersembunyi; submission yang mengisi honeypot ditolak tanpa pesan error yang menjelaskan alasannya (AR-19).
 
 ## 11.5 Authentication Protection
 
@@ -1074,12 +1107,24 @@ CAPTCHA digunakan pada form publik yang rentan spam atau penyalahgunaan.
 
 ## 11.6 Sensitive Data
 
-- Tidak mengumpulkan NIK tanpa kebutuhan.
+- Tidak mengumpulkan NIK tanpa kebutuhan; NIK yang dikumpulkan disimpan terenkripsi (AR-16).
 - Tidak menyimpan password secara manual.
 - Tidak menyimpan token dalam log.
 - Tidak menyimpan kode verifikasi dalam plaintext.
 - Dokumen privat tidak boleh diakses publik.
 - Data pengaduan tidak boleh muncul pada halaman publik.
+
+## 11.7 Database Access Control (RLS) — Baseline Tahap Evaluasi
+
+Keputusan AR-12:
+
+- RLS diaktifkan pada seluruh tabel aplikasi di schema `public`.
+- Privilege tabel aplikasi dicabut dari role `anon` dan `authenticated`, dan tidak ada policy untuk kedua role tersebut. Dengan begitu Supabase Data API tidak dapat membaca atau menulis data aplikasi.
+- Golang API terhubung menggunakan role runtime khusus (nama kerja `app_runtime`) yang bukan owner tabel, tidak memiliki `BYPASSRLS`, dan hanya diberi privilege yang diperlukan. Tabel append-only (riwayat status dan `audit_logs`) hanya diberi `SELECT` dan `INSERT`.
+- Setiap tabel memiliki satu policy permisif khusus untuk `app_runtime`. Otorisasi per pengguna sepenuhnya ditegakkan di Golang API.
+- Kredensial migration/owner terpisah dari kredensial runtime.
+- Kompatibilitas role runtime dengan Supabase connection pooler diverifikasi saat konfigurasi VPS (§5.5).
+- RLS berbasis identitas pengguna (penerusan klaim JWT per transaksi) ditunda ke pasca-evaluasi.
 
 ---
 
@@ -1121,6 +1166,8 @@ Data batas wilayah resmi Desa Lerep menjadi dependensi data.
 Data harus berasal dari sumber resmi atau dapat diverifikasi.
 
 Jika data batas resmi belum tersedia, implementasi batas administrasi tidak boleh menggunakan garis hasil perkiraan dan mengklaimnya sebagai batas resmi.
+
+Batas wilayah resmi disimpan sebagai berkas GeoJSON statis di frontend, bukan tabel database. Perubahan data batas memerlukan deployment ulang frontend.
 
 ---
 
@@ -1167,6 +1214,8 @@ Menggunakan status:
 Single Admin dapat langsung memublikasikan konten.
 
 Status Review disiapkan untuk kebutuhan multi-admin di masa depan.
+
+Status ini berlaku seragam untuk seluruh konten dengan workflow publikasi: dokumen publik, berita, pengumuman, banner, galeri, potensi, UMKM, agenda, fasilitas, dan proyek pembangunan. Preview adalah tampilan pratinjau, bukan status tersimpan. Pengaturan section beranda tidak memiliki status draft; preview dilakukan di dashboard dari isian formulir sebelum disimpan (AR-20).
 
 ## 14.2 Rich Text Editor
 
@@ -1227,7 +1276,8 @@ Dashboard mengelola:
 - Fitur inovasi.
 - Dokumen.
 - Media.
-- Pengaduan.
+- Pengaduan dan aspirasi (aspirasi P1).
+- Mandat persetujuan pelayanan.
 - Konfigurasi konten.
 - Audit log.
 - Analitik.
@@ -1552,7 +1602,7 @@ Dikerjakan setelah kebutuhan P0 aman dan tidak mengancam deadline evaluasi.
 
 Ditunda untuk pengembangan lanjutan.
 
-Urutan prioritas final mengikuti matriks prioritas dalam PRD v1.0. Dokumen arsitektur ini tidak mengubah prioritas yang sudah ditetapkan pada PRD.
+Urutan prioritas final mengikuti matriks prioritas dalam PRD v1.1 (pengaduan P0; aspirasi dan PWA dasar P1). Dokumen arsitektur ini tidak mengubah prioritas yang sudah ditetapkan pada PRD.
 
 ---
 
@@ -1649,18 +1699,33 @@ Seluruh keputusan Q1–Q70 dipertahankan sebagai dasar arsitektur.
 
 Keputusan tambahan dari audit PRD–Architecture:
 
-| ID    | Keputusan Tambahan                                                                                          |
-| ----- | ----------------------------------------------------------------------------------------------------------- |
-| AR-01 | Pelacakan pengajuan menggunakan POST dengan nomor tiket dan kode verifikasi pada request body               |
-| AR-02 | Kode verifikasi disimpan dalam bentuk hash dan dilindungi rate limiting                                     |
-| AR-03 | Riwayat perubahan status pengajuan disimpan dalam tabel terpisah                                            |
-| AR-04 | Seluruh endpoint publik dan admin menggunakan Golang API `/api/v1`                                          |
-| AR-05 | Responsive design untuk mobile, tablet, dan desktop                                                         |
-| AR-06 | GA4 dan Search Console untuk analitik dan SEO                                                               |
-| AR-07 | Data batas wilayah resmi menjadi dependensi peta administrasi                                               |
-| AR-08 | Fitur PWA dasar tanpa offline sync dan push notification                                                    |
-| AR-09 | Identitas pengadu wajib dan informasi pengaduan bersifat privat                                             |
-| AR-10 | Gambar scan tanda tangan hanya digunakan setelah persetujuan pejabat berwenang dan bukan TTE tersertifikasi |
+| ID    | Keputusan Tambahan                                                                                                                                                                               |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| AR-01 | Pelacakan pengajuan menggunakan POST dengan nomor tiket dan kode verifikasi pada request body                                                                                                    |
+| AR-02 | Kode verifikasi disimpan dalam bentuk hash dan dilindungi rate limiting                                                                                                                          |
+| AR-03 | Riwayat perubahan status pengajuan disimpan dalam tabel terpisah                                                                                                                                 |
+| AR-04 | Seluruh endpoint publik dan admin menggunakan Golang API `/api/v1`                                                                                                                               |
+| AR-05 | Responsive design untuk mobile, tablet, dan desktop                                                                                                                                              |
+| AR-06 | GA4 dan Search Console untuk analitik dan SEO                                                                                                                                                    |
+| AR-07 | Data batas wilayah resmi menjadi dependensi peta administrasi                                                                                                                                    |
+| AR-08 | Fitur PWA dasar (P1) tanpa offline sync dan push notification                                                                                                                                    |
+| AR-09 | Identitas pengadu wajib dan informasi pengaduan bersifat privat                                                                                                                                  |
+| AR-10 | Gambar scan tanda tangan hanya digunakan setelah persetujuan tercatat berdasarkan penunjukan dari pejabat berwenang yang tercatat di sistem dan bukan TTE tersertifikasi (diperbarui oleh AR-11) |
+
+Keputusan tambahan dari sinkronisasi PRD–Architecture–Schema (10 November 2026):
+
+| ID    | Keputusan Tambahan                                                                                                                                                                                                                                    |
+| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AR-11 | Persetujuan pelayanan dilakukan admin yang ditunjuk langsung oleh Kepala Desa/Carik (boleh lisan, surat opsional); penunjukan dicatat sekali di `service_approval_delegations`; pejabat tidak menyetujui per permohonan dan tidak wajib memiliki akun |
+| AR-12 | RLS baseline evaluasi: deny-all untuk `anon`/`authenticated`, role runtime khusus non-owner tanpa `BYPASSRLS`; RLS berbasis identitas pengguna ditunda                                                                                                |
+| AR-13 | Pengaduan P0; aspirasi dan PWA dasar P1 (mengikuti PRD v1.1)                                                                                                                                                                                          |
+| AR-14 | Kode verifikasi acak kriptografis, disimpan sebagai HMAC-SHA256 + pepper server, dibandingkan constant-time; kolom seragam `verification_code_hash`                                                                                                   |
+| AR-15 | `updated_at` diperbarui oleh repository Golang, tanpa trigger database                                                                                                                                                                                |
+| AR-16 | NIK dienkripsi di aplikasi (AES-256-GCM), disimpan sebagai ciphertext, ditampilkan tersamar                                                                                                                                                           |
+| AR-17 | Alasan penolakan/pembatalan disimpan sebagai catatan publik dan ditegakkan CHECK constraint                                                                                                                                                           |
+| AR-18 | Log login/logout bersumber dari audit log Supabase Auth; audit aplikasi mencatat mandat, approval, tanda tangan scan, dan akses file privat                                                                                                           |
+| AR-19 | Honeypot + CAPTCHA pada form publik; Schema Markup JSON-LD; print stylesheet untuk cetak halaman (P1)                                                                                                                                                 |
+| AR-20 | Status konten seragam di semua modul (termasuk galeri); preview section beranda dilakukan di dashboard tanpa status draft                                                                                                                             |
 
 ---
 
@@ -1717,7 +1782,8 @@ Nilai konfigurasi seperti endpoint, secret, domain, dan kredensial tidak ditanam
 
 Arsitektur ini ditetapkan berdasarkan:
 
-- PRD Website Desa Lerep v1.0 Final.
+- PRD Website Desa Lerep v1.1 Final.
+- Keputusan sinkronisasi AR-11–AR-20 (10 November 2026).
 - Seluruh keputusan arsitektur Q1–Q70.
 - Hasil PRD–Architecture Consistency Review delapan bagian.
 - Batasan tim tiga orang.
@@ -1742,10 +1808,10 @@ Validasi utama:
 
 Dengan disahkannya dokumen ini:
 
-1. `ARCHITECTURE.md` ditetapkan sebagai dokumen arsitektur final versi 1.0.
+1. `ARCHITECTURE.md` ditetapkan sebagai dokumen arsitektur final versi 1.1 (revisi sinkronisasi melalui ADR AR-11–AR-20).
 2. Seluruh keputusan Q1–Q70 menjadi acuan teknis implementasi.
 3. Keputusan tambahan hasil audit menjadi bagian resmi arsitektur.
-4. PRD v1.0 tetap menjadi sumber utama kebutuhan dan ruang lingkup produk.
+4. PRD v1.1 tetap menjadi sumber utama kebutuhan dan ruang lingkup produk.
 5. Tidak ada penambahan fitur di luar PRD melalui dokumen arsitektur ini.
 6. Perubahan arsitektur setelah penguncian harus memiliki alasan teknis dan dicatat sebagai Architecture Decision Record (ADR) baru.
 7. Perubahan yang berdampak pada scope produk harus diperiksa terhadap PRD terlebih dahulu.
@@ -1758,6 +1824,6 @@ Website Desa Lerep menggunakan arsitektur Modular Monolith dengan frontend Next.
 Arsitektur ini menjadi fondasi implementasi tahap evaluasi sekaligus menyediakan ruang pengembangan untuk kebutuhan website desa jangka panjang.
 
 **Dokumen: ARCHITECTURE.md**  
-**Versi: 1.0 Final**  
+**Versi: 1.1 Final (sinkronisasi 10 November 2026)**  
 **Status: LOCKED**  
 **Tanggal Penguncian: 8 November 2026**

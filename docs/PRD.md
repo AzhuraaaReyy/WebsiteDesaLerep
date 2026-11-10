@@ -1,17 +1,19 @@
 # PRODUCT REQUIREMENTS DOCUMENT (PRD)
+
 # WEBSITE DESA LEREP
 
-| Informasi | Keterangan |
-|---|---|
-| Nama Produk | Website Desa Lerep |
-| Versi Dokumen | 1.0 – Final |
-| Status | Final – Scope Locked |
-| Tanggal | 8 November 2026 |
-| Periode Pengembangan | 7–22 November 2026 |
-| Lokasi | Desa Lerep, Kecamatan Ungaran Barat, Kabupaten Semarang, Jawa Tengah |
-| Platform | Website Responsif + PWA Dasar |
-| Bahasa | Bahasa Indonesia |
-| Metode Pengembangan | Evaluation-First, Production-Ready Later |
+| Informasi            | Keterangan                                                           |
+| -------------------- | -------------------------------------------------------------------- |
+| Nama Produk          | Website Desa Lerep                                                   |
+| Versi Dokumen        | 1.1 – Final (Sinkronisasi)                                           |
+| Status               | Final – Scope Locked                                                 |
+| Tanggal              | 8 November 2026 (revisi sinkronisasi 10 November 2026)               |
+| Dokumen Terkait      | ARCHITECTURE.md v1.1, SCHEMA.md v1.9.1-review                        |
+| Periode Pengembangan | 7–22 November 2026                                                   |
+| Lokasi               | Desa Lerep, Kecamatan Ungaran Barat, Kabupaten Semarang, Jawa Tengah |
+| Platform             | Website Responsif + PWA Dasar                                        |
+| Bahasa               | Bahasa Indonesia                                                     |
+| Metode Pengembangan  | Evaluation-First, Production-Ready Later                             |
 
 ---
 
@@ -53,16 +55,16 @@ Oleh karena itu, Website Desa Lerep dirancang sebagai platform terpadu yang meng
 
 ## 2.1 Tujuan Utama
 
-| Tujuan | Hasil yang Diharapkan |
-|---|---|
-| Informasi desa | Informasi profil, wilayah, pemerintahan, dan statistik tersedia |
-| Transparansi | Dokumen dan informasi anggaran dapat diakses |
-| Pelayanan publik | Informasi layanan dan pengajuan digital tersedia |
-| Pengelolaan informasi | Admin dapat mengelola berita, pengumuman, dan agenda |
-| Potensi desa | Informasi wisata, kuliner, budaya, dan UMKM dapat dipublikasikan |
-| Partisipasi | Masyarakat memiliki kanal pengaduan dan aspirasi |
-| Keamanan | Data dan dokumen terlindungi |
-| Evaluasi | Seluruh indikator A–H memiliki fitur dan bukti pendukung |
+| Tujuan                | Hasil yang Diharapkan                                            |
+| --------------------- | ---------------------------------------------------------------- |
+| Informasi desa        | Informasi profil, wilayah, pemerintahan, dan statistik tersedia  |
+| Transparansi          | Dokumen dan informasi anggaran dapat diakses                     |
+| Pelayanan publik      | Informasi layanan dan pengajuan digital tersedia                 |
+| Pengelolaan informasi | Admin dapat mengelola berita, pengumuman, dan agenda             |
+| Potensi desa          | Informasi wisata, kuliner, budaya, dan UMKM dapat dipublikasikan |
+| Partisipasi           | Masyarakat memiliki kanal pengaduan dan aspirasi                 |
+| Keamanan              | Data dan dokumen terlindungi                                     |
+| Evaluasi              | Seluruh indikator A–H memiliki fitur dan bukti pendukung         |
 
 ## 2.2 Indikator Keberhasilan
 
@@ -83,12 +85,12 @@ Target performa numerik akan ditetapkan melalui pengujian pada infrastruktur akt
 
 # 3. TARGET USERS
 
-| Pengguna | Kebutuhan |
-|---|---|
-| Masyarakat Desa Lerep | Informasi desa, pelayanan, pengaduan, aspirasi, dan pengumuman |
-| Pemerintah dan Perangkat Desa | Pengelolaan informasi, dokumen, data, dan layanan |
-| Pengunjung Luar Desa | Informasi wilayah, wisata, kuliner, budaya, dan fasilitas |
-| Tim Evaluator | Memeriksa kelengkapan fitur dan bukti penilaian |
+| Pengguna                      | Kebutuhan                                                      |
+| ----------------------------- | -------------------------------------------------------------- |
+| Masyarakat Desa Lerep         | Informasi desa, pelayanan, pengaduan, aspirasi, dan pengumuman |
+| Pemerintah dan Perangkat Desa | Pengelolaan informasi, dokumen, data, dan layanan              |
+| Pengunjung Luar Desa          | Informasi wilayah, wisata, kuliner, budaya, dan fasilitas      |
+| Tim Evaluator                 | Memeriksa kelengkapan fitur dan bukti penilaian                |
 
 Tim evaluator merupakan pemangku kepentingan penilaian, bukan pengguna utama operasional.
 
@@ -111,11 +113,11 @@ Website memiliki delapan modul fungsional:
 
 ## 4.2 Kategori Prioritas
 
-| Prioritas | Definisi |
-|---|---|
-| P0 – Must Have | Fitur wajib untuk kebutuhan evaluasi dan fungsi utama website |
-| P1 – Should Have | Fitur tambahan yang dikerjakan jika kapasitas dan waktu memungkinkan |
-| P2 – Future Development | Pengembangan setelah tahap evaluasi |
+| Prioritas               | Definisi                                                             |
+| ----------------------- | -------------------------------------------------------------------- |
+| P0 – Must Have          | Fitur wajib untuk kebutuhan evaluasi dan fungsi utama website        |
+| P1 – Should Have        | Fitur tambahan yang dikerjakan jika kapasitas dan waktu memungkinkan |
+| P2 – Future Development | Pengembangan setelah tahap evaluasi                                  |
 
 Prioritas merupakan keputusan implementasi, bukan penghapusan kebutuhan produk. Fitur P1 dan P2 tetap tercatat sebagai arah pengembangan.
 
@@ -127,17 +129,17 @@ Prioritas merupakan keputusan implementasi, bukan penghapusan kebutuhan produk. 
 
 **Tujuan:** menyediakan informasi resmi mengenai identitas, wilayah, sejarah, dan pemerintahan Desa Lerep.
 
-| ID | Fitur | Prioritas |
-|---|---|---|
-| PRF-01 | Sejarah dan asal-usul desa | P0 |
-| PRF-02 | Visi dan misi | P0 |
-| PRF-03 | Informasi lokasi dan wilayah desa | P0 |
-| PRF-04 | Daftar dusun dan deskripsi sederhana | P0 |
-| PRF-05 | Struktur organisasi pemerintah desa | P0 |
-| PRF-06 | Profil perangkat desa dan jabatan | P0 |
-| PRF-07 | Tugas dan fungsi perangkat | P1 |
-| PRF-08 | Direktori lembaga desa terintegrasi | P1 |
-| PRF-09 | Ensiklopedia sejarah dan budaya multimedia | P2 |
+| ID     | Fitur                                      | Prioritas |
+| ------ | ------------------------------------------ | --------- |
+| PRF-01 | Sejarah dan asal-usul desa                 | P0        |
+| PRF-02 | Visi dan misi                              | P0        |
+| PRF-03 | Informasi lokasi dan wilayah desa          | P0        |
+| PRF-04 | Daftar dusun dan deskripsi sederhana       | P0        |
+| PRF-05 | Struktur organisasi pemerintah desa        | P0        |
+| PRF-06 | Profil perangkat desa dan jabatan          | P0        |
+| PRF-07 | Tugas dan fungsi perangkat                 | P1        |
+| PRF-08 | Direktori lembaga desa terintegrasi        | P1        |
+| PRF-09 | Ensiklopedia sejarah dan budaya multimedia | P2        |
 
 Informasi sejarah, perangkat, lembaga, dan wilayah harus diverifikasi oleh pemerintah desa.
 
@@ -155,14 +157,14 @@ Data yang direncanakan:
 - Pekerjaan.
 - Distribusi berdasarkan dusun jika tersedia.
 
-| ID | Fitur | Prioritas |
-|---|---|---|
-| STA-01 | Ringkasan statistik penduduk | P0 |
-| STA-02 | Grafik dan tabel statistik | P0 |
-| STA-03 | Filter berdasarkan tahun | P1 |
-| STA-04 | Perbandingan antarperiode | P1 |
-| STA-05 | Input manual dan impor CSV | P1 |
-| STA-06 | Visualisasi statistik berdasarkan wilayah GIS | P2 |
+| ID     | Fitur                                         | Prioritas |
+| ------ | --------------------------------------------- | --------- |
+| STA-01 | Ringkasan statistik penduduk                  | P0        |
+| STA-02 | Grafik dan tabel statistik                    | P0        |
+| STA-03 | Filter berdasarkan tahun                      | P1        |
+| STA-04 | Perbandingan antarperiode                     | P1        |
+| STA-05 | Input manual dan impor CSV                    | P1        |
+| STA-06 | Visualisasi statistik berdasarkan wilayah GIS | P2        |
 
 **Ketentuan privasi:** hanya data agregat yang boleh ditampilkan. NIK, nomor KK, alamat rinci, dan identitas pribadi warga tidak boleh dipublikasikan.
 
@@ -180,16 +182,16 @@ Informasi utama:
 - Informasi Dana Desa.
 - Dokumen publik pemerintahan.
 
-| ID | Fitur | Prioritas |
-|---|---|---|
-| TRN-01 | Pusat dokumen transparansi | P0 |
-| TRN-02 | Upload dan download PDF | P0 |
-| TRN-03 | Ringkasan informasi anggaran | P0 |
-| TRN-04 | Grafik dan tabel anggaran | P0 |
-| TRN-05 | Arsip dan filter tahun | P1 |
-| TRN-06 | Impor Excel/CSV dengan validasi | P1 |
-| TRN-07 | Monitoring pembangunan terintegrasi | P1 |
-| TRN-08 | Halaman khusus Dana Desa | P1 |
+| ID     | Fitur                               | Prioritas |
+| ------ | ----------------------------------- | --------- |
+| TRN-01 | Pusat dokumen transparansi          | P0        |
+| TRN-02 | Upload dan download PDF             | P0        |
+| TRN-03 | Ringkasan informasi anggaran        | P0        |
+| TRN-04 | Grafik dan tabel anggaran           | P0        |
+| TRN-05 | Arsip dan filter tahun              | P1        |
+| TRN-06 | Impor Excel/CSV dengan validasi     | P1        |
+| TRN-07 | Monitoring pembangunan terintegrasi | P1        |
+| TRN-08 | Halaman khusus Dana Desa            | P1        |
 
 Pengelolaan data menggunakan:
 
@@ -251,7 +253,7 @@ Alur pengajuan:
 6. Admin melakukan verifikasi.
 7. Admin meminta perbaikan jika diperlukan.
 8. Permohonan diproses.
-9. Kepala Desa atau pejabat berwenang memberikan persetujuan.
+9. Admin pemegang mandat persetujuan yang berlaku memberikan persetujuan atau penolakan (lihat §5.4.6).
 10. Dokumen hasil layanan disampaikan kepada pemohon.
 
 Setiap layanan dapat memiliki konfigurasi formulir dan persyaratan yang berbeda.
@@ -263,7 +265,7 @@ Sistem menggunakan pendekatan hybrid:
 - Informasi publik dapat diakses tanpa login.
 - Akun masyarakat bersifat opsional.
 - Pengajuan dapat mengikuti ketentuan masing-masing layanan.
-- Pelacakan tanpa akun menggunakan nomor permohonan dan kode verifikasi.
+- Pelacakan tanpa akun menggunakan nomor permohonan dan kode verifikasi. Istilah "kode verifikasi" berlaku seragam untuk pelacakan permohonan, pengaduan, dan aspirasi.
 - Pengguna dengan akun dapat melihat riwayat permohonan.
 - Registrasi dapat menggunakan email atau nomor telepon dengan verifikasi sesuai mekanisme yang tersedia.
 - NIK tidak dikumpulkan kecuali diperlukan untuk layanan tertentu.
@@ -285,7 +287,7 @@ Status tambahan:
 - Ditolak, dengan alasan.
 - Dibatalkan, dengan penjelasan.
 
-Setiap perubahan status harus mencatat waktu, petugas, dan catatan proses.
+Setiap perubahan status harus mencatat waktu, petugas, dan catatan proses. Alasan penolakan dan pembatalan wajib dapat dilihat oleh pemohon melalui halaman pelacakan; catatan internal lain tetap privat.
 
 ### 5.4.6 Dokumen PDF dan Persetujuan
 
@@ -295,23 +297,35 @@ Sistem mendukung:
 - Pengisian formulir online.
 - Pembuatan PDF otomatis berdasarkan data permohonan.
 
+**Model persetujuan: penunjukan langsung admin oleh atasan.** Agar pelayanan tidak bergantung pada ketersediaan pejabat yang sering sibuk, persetujuan permohonan dilakukan oleh admin yang memegang **mandat persetujuan** dari Kepala Desa atau Carik sesuai kewenangannya.
+
+- Penunjukan cukup diberikan **langsung oleh atasan** (Kepala Desa atau Carik), boleh secara lisan. **Surat mandat tidak wajib**; jika kelak ada surat, nomornya dapat ditambahkan.
+- Admin mencatat penunjukan tersebut **satu kali** di dashboard: ditunjuk oleh siapa, sejak kapan, cakupan layanan (semua layanan, kategori tertentu, atau layanan tertentu), dan apakah boleh memakai tanda tangan scan. Masa berlaku boleh dikosongkan, artinya berlaku sampai dicabut.
+- Selama mandat berlaku dan belum dicabut, admin menyetujui atau menolak setiap permohonan secara langsung **tanpa menunggu pejabat per permohonan**.
+- Pejabat pemberi mandat tidak wajib memiliki akun di sistem.
+- Sistem mencatat admin yang memproses, mandat yang menjadi dasar, dan waktu keputusan sehingga setiap persetujuan dapat ditelusuri.
+- Mandat dapat dicabut atau diganti; mandat lama tetap tersimpan sebagai jejak historis.
+
 Alur persetujuan:
 
 1. Sistem menghasilkan PDF.
 2. Admin memverifikasi.
-3. Kepala Desa atau pejabat berwenang menyetujui melalui akun yang aman.
-4. Sistem menerapkan gambar tanda tangan hasil scan setelah persetujuan tercatat.
+3. Admin pemegang mandat yang berlaku menyetujui atau menolak; sistem menolak tindakan jika mandat tidak berlaku atau tidak mencakup layanan tersebut.
+4. Sistem menerapkan gambar tanda tangan hasil scan setelah persetujuan tercatat, hanya jika izin penggunaan tanda tangan scan tercatat pada penunjukan admin.
 5. Dokumen final disimpan secara aman.
 6. Pemohon dapat mengakses dokumen sesuai hak akses.
 
-**Batasan:** tanda tangan hasil scan bukan TTE tersertifikasi. Penggunaannya wajib mengikuti kebijakan dan persetujuan pejabat berwenang serta ketentuan administrasi yang berlaku. Integrasi TTE tersertifikasi disiapkan sebagai pengembangan berikutnya.
+**Batasan:** tanda tangan hasil scan bukan TTE tersertifikasi. Penggunaannya wajib atas persetujuan pejabat berwenang (cukup lisan, dicatat pada penunjukan admin) serta mengikuti ketentuan administrasi yang berlaku. Integrasi TTE tersertifikasi disiapkan sebagai pengembangan berikutnya.
 
 ### 5.4.7 Pengaduan Masyarakat
+
+**Prioritas: P0** (mendukung indikator C).
 
 - Pengaduan wajib mencantumkan identitas dan kontak.
 - Pengaduan anonim tidak didukung.
 - Pelapor dapat melampirkan bukti.
-- Sistem menghasilkan nomor tiket dan kode pelacakan.
+- Sistem menghasilkan nomor tiket dan kode verifikasi.
+- Penolakan pengaduan wajib disertai tanggapan yang dapat dilihat pelapor.
 - Pengaduan hanya dapat dilihat pelapor dan petugas berwenang.
 - Statistik agregat dapat ditampilkan tanpa membuka identitas atau isi pengaduan.
 
@@ -364,10 +378,11 @@ Kontak pribadi tidak ditampilkan tanpa izin.
 Status:
 
 - Draft.
+- Review (disiapkan untuk multi-admin; pada tahap evaluasi Single Admin dapat langsung memublikasikan tanpa melalui Review).
 - Published.
 - Archived.
 
-Admin harus melakukan publikasi secara manual setelah melihat pratinjau.
+Admin harus melakukan publikasi secara manual setelah melihat pratinjau. Preview adalah tampilan pratinjau, bukan status tersimpan.
 
 ### Pencarian Berita
 
@@ -500,9 +515,11 @@ Mekanisme pembatasan suara ganda harus memperhatikan privasi.
 
 ### E. Aspirasi Masyarakat
 
+**Prioritas: P1** (mendukung indikator G; dikerjakan setelah P0 stabil).
+
 - Formulir aspirasi dengan identitas dan kontak.
 - Kategori aspirasi.
-- Nomor tiket.
+- Nomor tiket dan kode verifikasi.
 - Status dan tanggapan admin.
 - Pelacakan melalui tiket atau akun opsional.
 
@@ -527,6 +544,8 @@ Admin dapat:
 - Melihat preview sebelum publikasi.
 
 Pengaturan layout hanya menggunakan komponen yang disediakan, bukan mengubah kode secara bebas.
+
+Pada tahap evaluasi, preview pengaturan section beranda ditampilkan di dashboard dari isian formulir sebelum disimpan; perubahan yang disimpan langsung berlaku. Banner beranda tetap mengikuti workflow status konten.
 
 ## 6.2 Pusat Dokumen Desa
 
@@ -741,7 +760,9 @@ Pengembangan berikutnya:
 
 ## 9.4 Workflow Konten
 
-`Draft → Preview → Publish → Archived`
+`Draft → (Review) → Preview → Publish → Archived`
+
+Status konten yang digunakan seragam di seluruh modul: Draft, Review, Published, Archived. Review bersifat opsional pada tahap evaluasi (Single Admin) dan disiapkan untuk multi-admin.
 
 Semua konten harus dikelola melalui dashboard dan memiliki validasi sebelum publikasi.
 
@@ -771,19 +792,19 @@ Tidak ada panel aksesibilitas khusus. Standar dasar usability dan aksesibilitas 
 
 ## 11.1 Technology Stack
 
-| Lapisan | Teknologi |
-|---|---|
-| Frontend | Next.js |
-| Styling | Tailwind CSS |
-| Backend | Golang |
-| Database/BaaS | Supabase |
-| Infrastruktur | Docker + VPS |
-| Peta dasar | OpenStreetMap |
-| Peta interaktif | Leaflet |
-| Navigasi | Google Maps |
-| Analytics | Google Analytics 4 |
-| SEO monitoring | Google Search Console |
-| Deployment | VPS + HTTPS |
+| Lapisan         | Teknologi             |
+| --------------- | --------------------- |
+| Frontend        | Next.js               |
+| Styling         | Tailwind CSS          |
+| Backend         | Golang                |
+| Database/BaaS   | Supabase              |
+| Infrastruktur   | Docker + VPS          |
+| Peta dasar      | OpenStreetMap         |
+| Peta interaktif | Leaflet               |
+| Navigasi        | Google Maps           |
+| Analytics       | Google Analytics 4    |
+| SEO monitoring  | Google Search Console |
+| Deployment      | VPS + HTTPS           |
 
 Versi dependensi dipilih berdasarkan kompatibilitas dan stabilitas ketika implementasi.
 
@@ -870,7 +891,7 @@ Setiap API harus memiliki validasi, kontrol akses, respons error konsisten, dan 
 ## 12.1 Authentication
 
 - Login admin.
-- Password disimpan menggunakan hashing aman.
+- Password disimpan menggunakan hashing aman (dikelola Supabase Auth; aplikasi tidak menyimpan password).
 - Pembatasan percobaan login.
 - Session/token dikelola secara aman.
 - Otorisasi dilakukan pada backend.
@@ -889,6 +910,7 @@ Setiap API harus memiliki validasi, kontrol akses, respons error konsisten, dan 
 ## 12.3 Data Privacy
 
 - Tidak menampilkan NIK dan nomor KK.
+- NIK yang dikumpulkan untuk layanan tertentu disimpan terenkripsi di tingkat aplikasi dan hanya ditampilkan tersamar kepada petugas berwenang.
 - Tidak mempublikasikan dokumen pribadi.
 - Pengumpulan data sesuai kebutuhan layanan.
 - Pengaduan hanya dapat diakses pihak berwenang dan pelapor.
@@ -899,16 +921,17 @@ Setiap API harus memiliki validasi, kontrol akses, respons error konsisten, dan 
 
 Aktivitas yang dicatat:
 
-- Login dan logout.
+- Login dan logout (dicatat melalui log audit Supabase Auth; lihat ARCHITECTURE §8.10).
 - CRUD data penting.
 - Identitas pelaku perubahan.
 - Perubahan data sebelum dan sesudah.
-- Akses dokumen sensitif.
-- Persetujuan dokumen.
+- Akses dokumen sensitif (pembuatan akses ke file privat).
+- Persetujuan dokumen dan mandat yang menjadi dasarnya.
+- Pemberian dan pencabutan mandat persetujuan.
 - Penerapan tanda tangan hasil scan.
 - Perubahan role dan permission.
 
-Password, token, dan isi dokumen sensitif mentah tidak boleh dimasukkan ke audit log.
+Password, token, kode verifikasi, dan isi dokumen sensitif mentah tidak boleh dimasukkan ke audit log.
 
 ## 12.5 HTTPS
 
@@ -918,18 +941,18 @@ Website wajib menggunakan HTTPS sebelum dipublikasikan.
 
 # 13. NON-FUNCTIONAL REQUIREMENTS
 
-| Aspek | Persyaratan |
-|---|---|
-| Performance | Optimasi gambar, aset, API, dan query |
-| Responsiveness | Desktop, tablet, mobile |
-| Availability | Infrastruktur dapat dipantau dan dipulihkan |
-| Maintainability | Kode terstruktur dan terdokumentasi |
-| Scalability | Modul dapat dikembangkan secara bertahap |
-| Security | Validasi, kontrol akses, HTTPS, perlindungan file |
-| Backup | Backup database dan media terjadwal |
-| SEO | Metadata, sitemap, robots.txt, Open Graph, Schema Markup, canonical URL |
-| PWA | Manifest, ikon, splash screen, caching dasar |
-| Language | Bahasa Indonesia |
+| Aspek           | Persyaratan                                                             |
+| --------------- | ----------------------------------------------------------------------- |
+| Performance     | Optimasi gambar, aset, API, dan query                                   |
+| Responsiveness  | Desktop, tablet, mobile                                                 |
+| Availability    | Infrastruktur dapat dipantau dan dipulihkan                             |
+| Maintainability | Kode terstruktur dan terdokumentasi                                     |
+| Scalability     | Modul dapat dikembangkan secara bertahap                                |
+| Security        | Validasi, kontrol akses, HTTPS, perlindungan file                       |
+| Backup          | Backup database dan media terjadwal                                     |
+| SEO             | Metadata, sitemap, robots.txt, Open Graph, Schema Markup, canonical URL |
+| PWA             | Manifest, ikon, splash screen, caching dasar                            |
+| Language        | Bahasa Indonesia                                                        |
 
 ## 13.1 Backup
 
@@ -941,7 +964,7 @@ Website wajib menggunakan HTTPS sebelum dipublikasikan.
 
 ## 13.2 PWA
 
-Tahap evaluasi:
+**Prioritas: P1.** Dikerjakan jika P0 sudah stabil; tidak memblokir kesiapan evaluasi. Jika dikerjakan, cakupannya:
 
 - Installable ke home screen.
 - App icon.
@@ -953,15 +976,15 @@ Offline synchronization dan push notification tidak termasuk tahap evaluasi.
 
 ## 13.3 Integrasi Eksternal
 
-| Integrasi | Tahap Evaluasi |
-|---|---|
-| WhatsApp | Tombol menuju kontak resmi |
-| Email | Tautan mailto |
-| Google Maps | Navigasi eksternal |
-| OpenStreetMap | Peta dasar |
-| Leaflet | Peta interaktif |
-| Google Analytics 4 | Analitik |
-| Google Search Console | Monitoring SEO |
+| Integrasi                  | Tahap Evaluasi                 |
+| -------------------------- | ------------------------------ |
+| WhatsApp                   | Tombol menuju kontak resmi     |
+| Email                      | Tautan mailto                  |
+| Google Maps                | Navigasi eksternal             |
+| OpenStreetMap              | Peta dasar                     |
+| Leaflet                    | Peta interaktif                |
+| Google Analytics 4         | Analitik                       |
+| Google Search Console      | Monitoring SEO                 |
 | Google Forms/platform lain | Pendaftaran kegiatan eksternal |
 
 WhatsApp Business API, email otomatis, chatbot, dan publikasi otomatis media sosial tidak termasuk tahap evaluasi.
@@ -998,16 +1021,16 @@ Data yang belum tersedia dari pemerintah desa harus ditandai sebagai menunggu da
 
 # 15. ASSESSMENT TRACEABILITY MATRIX
 
-| Aspek | Indikator | Modul/Fitur | Bukti |
-|---|---|---|---|
-| A | Profil dan kelengkapan informasi desa | Profil, Statistik, Potensi, Agenda | Halaman dan dokumen |
-| B | Transparansi dan Dana Desa | Transparansi, Monitoring Pembangunan | Dokumen, grafik, tabel |
-| C | Pelayanan publik digital | Pelayanan, Pengaduan, Kontak | Formulir, SOP, status |
-| D | Pembaruan dan pengelolaan konten | CMS, Berita, Agenda, Pengumuman | Dashboard dan konten |
-| E | UX, navigasi, aksesibilitas, performa | UI/UX, Search, Responsive | Hasil pengujian |
-| F | Inovasi dan integrasi digital | GIS, Statistik, FAQ, Polling, PWA | Demo fitur |
-| G | Partisipasi dan pemberdayaan | UMKM, Potensi, Aspirasi, Lembaga | Katalog dan formulir |
-| H | Keamanan, privasi, kepatuhan | HTTPS, RBAC, Audit, Backup | Konfigurasi dan pengujian |
+| Aspek | Indikator                             | Modul/Fitur                                      | Bukti                     |
+| ----- | ------------------------------------- | ------------------------------------------------ | ------------------------- |
+| A     | Profil dan kelengkapan informasi desa | Profil, Statistik, Potensi, Agenda               | Halaman dan dokumen       |
+| B     | Transparansi dan Dana Desa            | Transparansi, Monitoring Pembangunan             | Dokumen, grafik, tabel    |
+| C     | Pelayanan publik digital              | Pelayanan, Pengaduan, Kontak                     | Formulir, SOP, status     |
+| D     | Pembaruan dan pengelolaan konten      | CMS, Berita, Agenda, Pengumuman                  | Dashboard dan konten      |
+| E     | UX, navigasi, aksesibilitas, performa | UI/UX, Search, Responsive                        | Hasil pengujian           |
+| F     | Inovasi dan integrasi digital         | GIS (P0), Statistik (P0); FAQ, Polling, PWA (P1) | Demo fitur                |
+| G     | Partisipasi dan pemberdayaan          | UMKM, Potensi (P0); Aspirasi, Lembaga (P1)       | Katalog dan formulir      |
+| H     | Keamanan, privasi, kepatuhan          | HTTPS, RBAC, Audit, Backup                       | Konfigurasi dan pengujian |
 
 Setiap indikator perlu memiliki empat komponen:
 
@@ -1031,21 +1054,23 @@ Prioritas utama implementasi tahap evaluasi:
 5. Statistik desa dasar.
 6. Transparansi dan pusat dokumen.
 7. Informasi pelayanan publik.
-8. Pengajuan layanan inti.
-9. CMS berita dan pengumuman.
-10. Potensi desa dan katalog UMKM sederhana.
-11. Agenda kegiatan.
-12. Kontak resmi.
-13. Peta lokasi prioritas.
-14. Admin Dashboard.
-15. Authentication dan keamanan dasar.
-16. Responsivitas.
-17. Pengujian dan bukti penilaian.
+8. Pengajuan layanan inti, termasuk persetujuan berbasis mandat.
+9. Pengaduan masyarakat.
+10. CMS berita dan pengumuman.
+11. Potensi desa dan katalog UMKM sederhana.
+12. Agenda kegiatan.
+13. Kontak resmi.
+14. Peta lokasi prioritas.
+15. Admin Dashboard.
+16. Authentication dan keamanan dasar.
+17. Responsivitas.
+18. Pengujian dan bukti penilaian.
 
 ## 16.2 P1 – SHOULD HAVE
 
 Dikerjakan jika kebutuhan P0 sudah stabil:
 
+- Aspirasi masyarakat.
 - Monitoring pembangunan lebih lengkap.
 - Direktori lembaga desa.
 - FAQ kontekstual.
@@ -1081,11 +1106,11 @@ Dikembangkan setelah tahap evaluasi:
 
 # 17. DEVELOPMENT TEAM
 
-| Anggota | Tanggung Jawab |
-|---|---|
-| Andhika | UI/UX dan Frontend |
-| Ilham | Backend dan Infrastruktur |
-| Rizal | Riset data, integrasi, dan QA |
+| Anggota | Tanggung Jawab                |
+| ------- | ----------------------------- |
+| Andhika | UI/UX dan Frontend            |
+| Ilham   | Backend dan Infrastruktur     |
+| Rizal   | Riset data, integrasi, dan QA |
 
 Kolaborasi diperlukan pada integrasi frontend-backend, pengujian, dan deployment.
 
@@ -1095,21 +1120,21 @@ Kolaborasi diperlukan pada integrasi frontend-backend, pengujian, dan deployment
 
 **Periode: 7–22 November 2026**
 
-| Tanggal | Fokus | Output |
-|---|---|---|
-| 7 November | Kickoff dan penetapan kebutuhan | Tujuan dan pembagian tugas |
-| 8 November | Finalisasi PRD dan scope freeze | PRD v1.0 |
-| 9 November | Sitemap, template, arsitektur, dan desain database | Acuan teknis |
-| 10 November | Setup project dan fondasi UI/backend | Project dasar berjalan |
-| 11 November | Autentikasi dan integrasi frontend-backend | Fondasi sistem |
-| 12–13 November | Homepage, profil, CMS, berita | Halaman publik dan CMS |
-| 14–15 November | Statistik, transparansi, dokumen | Modul data dan dokumen |
-| 16–17 November | Pelayanan publik dan formulir | Pengajuan layanan inti |
-| 18 November | Potensi, agenda, kontak, peta | Modul pendukung |
-| 19 November | Integrasi modul dan dashboard | Sistem terintegrasi |
-| 20 November | Security, responsive, SEO, backup | Stabilitas sistem |
-| 21 November | QA, perbaikan, bukti evaluasi | Hasil pengujian |
-| 22 November | Deployment dan evaluasi akhir | Website siap diperiksa |
+| Tanggal        | Fokus                                              | Output                     |
+| -------------- | -------------------------------------------------- | -------------------------- |
+| 7 November     | Kickoff dan penetapan kebutuhan                    | Tujuan dan pembagian tugas |
+| 8 November     | Finalisasi PRD dan scope freeze                    | PRD v1.0                   |
+| 9 November     | Sitemap, template, arsitektur, dan desain database | Acuan teknis               |
+| 10 November    | Setup project dan fondasi UI/backend               | Project dasar berjalan     |
+| 11 November    | Autentikasi dan integrasi frontend-backend         | Fondasi sistem             |
+| 12–13 November | Homepage, profil, CMS, berita                      | Halaman publik dan CMS     |
+| 14–15 November | Statistik, transparansi, dokumen                   | Modul data dan dokumen     |
+| 16–17 November | Pelayanan publik dan formulir                      | Pengajuan layanan inti     |
+| 18 November    | Potensi, agenda, kontak, peta                      | Modul pendukung            |
+| 19 November    | Integrasi modul dan dashboard                      | Sistem terintegrasi        |
+| 20 November    | Security, responsive, SEO, backup                  | Stabilitas sistem          |
+| 21 November    | QA, perbaikan, bukti evaluasi                      | Hasil pengujian            |
+| 22 November    | Deployment dan evaluasi akhir                      | Website siap diperiksa     |
 
 Tanggal yang telah berlalu merupakan bagian dari jadwal awal. Mulai 8 November, pekerjaan yang belum selesai harus disesuaikan dengan kondisi aktual tim.
 
@@ -1130,9 +1155,11 @@ Informasi berikut membutuhkan konfirmasi atau dokumen resmi pemerintah desa:
 7. Batas wilayah dan koordinat resmi.
 8. Data perangkat dan lembaga desa.
 9. Kontak resmi desa.
-10. Kebijakan penggunaan tanda tangan hasil scan.
+10. Persetujuan Kepala Desa atas penggunaan tanda tangan hasil scan dan file gambar tanda tangannya (persetujuan cukup lisan; dicatat admin di sistem).
 11. Domain dan akses VPS.
 12. Akun layanan pihak ketiga yang diperlukan.
+
+Surat mandat persetujuan **tidak** menjadi dependensi; penunjukan admin cukup langsung dari atasan (§5.4.6).
 
 Data yang belum tersedia tidak boleh diisi dengan angka atau informasi rekaan. Gunakan data uji yang diberi label jelas selama pengembangan.
 
@@ -1140,7 +1167,7 @@ Data yang belum tersedia tidak boleh diisi dengan angka atau informasi rekaan. G
 
 # 20. SCOPE FREEZE & CHANGE MANAGEMENT
 
-PRD versi 1.0 menjadi acuan pengembangan tahap evaluasi.
+PRD versi 1.1 (revisi sinkronisasi dari v1.0) menjadi acuan pengembangan tahap evaluasi.
 
 Ketentuan:
 
@@ -1186,4 +1213,25 @@ Ruang lingkup tahap evaluasi berfokus pada:
 
 Fitur yang belum memungkinkan dikerjakan dalam periode evaluasi tetap menjadi bagian dari roadmap pengembangan berikutnya.
 
-**Dokumen ini menjadi acuan kebutuhan produk versi 1.0 untuk tim pengembang Website Desa Lerep.**
+**Dokumen ini menjadi acuan kebutuhan produk versi 1.1 untuk tim pengembang Website Desa Lerep.**
+
+---
+
+# 23. RIWAYAT PERUBAHAN
+
+## v1.1 — 10 November 2026 (Sinkronisasi PRD–Architecture–Schema)
+
+Perubahan dicatat dan disetujui tim sesuai §20. Tidak ada fitur baru yang ditambahkan.
+
+| No  | Bagian                 | Perubahan                                                                                                                                                                                                                     | Alasan                                                                                                               |
+| --- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 1   | §5.4.3, §5.4.6         | Persetujuan permohonan dilakukan admin yang ditunjuk langsung oleh Kepala Desa/Carik; surat mandat tidak wajib; penunjukan dicatat sekali di dashboard; pejabat tidak menyetujui per permohonan dan tidak wajib memiliki akun | Admin menjadi pelaksana utama agar pelayanan tidak terhambat kesibukan pejabat; selaras SCHEMA E.8–E.9 dan ADR AR-11 |
+| 2   | §5.4.5                 | Alasan penolakan/pembatalan wajib terlihat oleh pemohon                                                                                                                                                                       | Selaras ARCHITECTURE §9.3                                                                                            |
+| 3   | §5.4.7, §16.1          | Pengaduan ditetapkan P0                                                                                                                                                                                                       | Indikator C                                                                                                          |
+| 4   | §5.8.E, §16.2          | Aspirasi ditetapkan P1                                                                                                                                                                                                        | Indikator G; menjaga fokus P0                                                                                        |
+| 5   | §13.2, §15             | PWA dasar ditegaskan P1 dan tidak memblokir evaluasi                                                                                                                                                                          | Konsistensi dengan §16.2                                                                                             |
+| 6   | §5.5, §9.4             | Status konten diseragamkan: Draft, Review (opsional), Published, Archived                                                                                                                                                     | Selaras ARCHITECTURE §14.1                                                                                           |
+| 7   | §6.1                   | Mekanisme preview Homepage CMS diperjelas                                                                                                                                                                                     | Section beranda tidak memiliki status draft di schema                                                                |
+| 8   | §5.4.4, §5.4.7, §5.8.E | Istilah "kode verifikasi" diseragamkan                                                                                                                                                                                        | Konsistensi penamaan                                                                                                 |
+| 9   | §12.1, §12.3, §12.4    | Password dikelola Supabase Auth; NIK terenkripsi; sumber log login/logout; pencatatan mandat                                                                                                                                  | Selaras ARCHITECTURE §8.10–§8.11                                                                                     |
+| 10  | §19                    | Surat mandat tidak menjadi dependensi; cukup persetujuan lisan atas penggunaan tanda tangan scan                                                                                                                              | Prinsip kemudahan bagi masyarakat dan pemerintah desa                                                                |
