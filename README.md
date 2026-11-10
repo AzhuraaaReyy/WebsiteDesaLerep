@@ -166,8 +166,10 @@ Isi nilai yang diperlukan di `.env`. Jangan commit file tersebut.
 ### Development
 
 ```powershell
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
 ```
+
+Setelah stack berjalan, frontend memakai hot reload; backend perlu di-restart setelah kode Go berubah.
 
 Akses:
 
