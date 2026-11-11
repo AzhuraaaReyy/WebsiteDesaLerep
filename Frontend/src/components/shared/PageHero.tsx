@@ -1,3 +1,4 @@
+import { asset } from "@/lib/asset";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { Eyebrow, OrnamentDivider } from "@/components/ornament/Ornaments";
@@ -10,7 +11,7 @@ export function PageHero({ eyebrow, title, description }: { eyebrow: string; tit
     <section className="relative isolate overflow-hidden border-b border-emas-soft/70 bg-mori-2">
       <div
         className="absolute inset-0 -z-10 opacity-[0.08] [mask-image:linear-gradient(to_left,black,transparent_70%)]"
-        style={{ backgroundImage: "url(/images/batik.jpg)", backgroundSize: "420px" }}
+        style={{ backgroundImage: `url(${asset("/images/batik.jpg")})`, backgroundSize: "420px" }}
         aria-hidden="true"
       />
       <div className={cn(CONTENT_CONTAINER, "py-12 sm:py-16")}>

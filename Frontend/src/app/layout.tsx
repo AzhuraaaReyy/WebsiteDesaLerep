@@ -1,3 +1,4 @@
+import { asset } from "@/lib/asset";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Lora, Poppins } from "next/font/google";
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   },
   description:
     "Website resmi Desa Wisata Lerep, Kecamatan Ungaran Barat, Kabupaten Semarang. Profil desa, destinasi wisata budaya, agenda, dan layanan warga.",
-  icons: { icon: "/images/logo-mark.png" },
+  icons: { icon: asset("/images/logo-mark.png") },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

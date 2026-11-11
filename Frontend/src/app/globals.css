@@ -55,14 +55,14 @@ body {
 
 /* Pita motif batik (border horizontal) — dipakai di header, footer, kartu. */
 .pita-batik {
-  background-image: url("/images/border-batik-h.jpg");
+  background-image: url("../../public/images/border-batik-h.jpg");
   background-repeat: repeat-x;
   background-size: auto 100%;
   background-position: center;
 }
 
 .pita-kembang {
-  background-image: url("/images/border-floral-h.jpg");
+  background-image: url("../../public/images/border-floral-h.jpg");
   background-repeat: repeat-x;
   background-size: auto 100%;
   background-position: center;

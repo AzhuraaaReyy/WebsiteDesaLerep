@@ -1,3 +1,4 @@
+import { asset } from "@/lib/asset";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
@@ -39,7 +40,7 @@ export function MotifImage({
     <div className={cn("relative overflow-hidden bg-sogan-900", className)} role="img" aria-label={alt}>
       <div
         className="absolute inset-0 scale-110 bg-cover transition-transform duration-700 group-hover:scale-125"
-        style={{ backgroundImage: "url(/images/batik.jpg)", backgroundPosition: m.position }}
+        style={{ backgroundImage: `url(${asset("/images/batik.jpg")})`, backgroundPosition: m.position }}
       />
       <div className={cn("absolute inset-0 bg-gradient-to-br", m.tint)} />
       <Image

@@ -1,3 +1,4 @@
+import { asset } from "@/lib/asset";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
@@ -37,7 +38,7 @@ export function HeroSection() {
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-mori via-mori/95 to-mori/75 lg:via-mori/80 lg:via-40% lg:to-mori/0" />
       <div
         className="absolute inset-y-0 left-0 -z-10 w-full opacity-[0.07] [mask-image:linear-gradient(to_right,black_45%,transparent)] lg:w-3/5"
-        style={{ backgroundImage: "url(/images/batik.jpg)", backgroundSize: "420px" }}
+        style={{ backgroundImage: `url(${asset("/images/batik.jpg")})`, backgroundSize: "420px" }}
         aria-hidden="true"
       />
 

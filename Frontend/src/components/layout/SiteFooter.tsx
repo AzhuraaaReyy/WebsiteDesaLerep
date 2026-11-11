@@ -1,3 +1,4 @@
+import { asset } from "@/lib/asset";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight, Clock, Mail, MapPin, Phone, Star } from "lucide-react";
@@ -28,7 +29,7 @@ export function SiteFooter() {
       <div className="pita-batik h-3 border-y border-black/30" aria-hidden="true" />
       <div
         className="absolute inset-0 -z-10 opacity-[0.12] mix-blend-luminosity"
-        style={{ backgroundImage: "url(/images/batik.jpg)", backgroundSize: "520px" }}
+        style={{ backgroundImage: `url(${asset("/images/batik.jpg")})`, backgroundSize: "520px" }}
         aria-hidden="true"
       />
       <Image
