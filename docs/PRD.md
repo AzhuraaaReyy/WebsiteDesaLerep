@@ -7,8 +7,8 @@
 | Nama Produk          | Website Desa Lerep                                                   |
 | Versi Dokumen        | 1.1 – Final (Sinkronisasi)                                           |
 | Status               | Final – Scope Locked                                                 |
-| Tanggal              | 8 November 2026 (revisi sinkronisasi 10 November 2026)               |
-| Dokumen Terkait      | ARCHITECTURE.md v1.1, SCHEMA.md v1.9.1-review                        |
+| Tanggal              | 8 November 2026 (revisi sinkronisasi 10 dan 11 November 2026)        |
+| Dokumen Terkait      | ARCHITECTURE.md v1.2, SCHEMA.md v1.9.2-review                        |
 | Periode Pengembangan | 7–22 November 2026                                                   |
 | Lokasi               | Desa Lerep, Kecamatan Ungaran Barat, Kabupaten Semarang, Jawa Tengah |
 | Platform             | Website Responsif + PWA Dasar                                        |
@@ -1158,6 +1158,8 @@ Informasi berikut membutuhkan konfirmasi atau dokumen resmi pemerintah desa:
 10. Persetujuan Kepala Desa atas penggunaan tanda tangan hasil scan dan file gambar tanda tangannya (persetujuan cukup lisan; dicatat admin di sistem).
 11. Domain dan akses VPS.
 12. Akun layanan pihak ketiga yang diperlukan.
+13. Kop surat desa, format nomor surat, dan satu contoh surat keterangan yang sudah disamarkan, sebagai dasar template dokumen PDF hasil layanan (ARCHITECTURE AR-22).
+14. Logo yang ditetapkan desa untuk website (ARCHITECTURE AR-21).
 
 Surat mandat persetujuan **tidak** menjadi dependensi; penunjukan admin cukup langsung dari atasan (§5.4.6).
 
@@ -1218,6 +1220,15 @@ Fitur yang belum memungkinkan dikerjakan dalam periode evaluasi tetap menjadi ba
 ---
 
 # 23. RIWAYAT PERUBAHAN
+
+## v1.1 — revisi 11 November 2026 (Sinkronisasi dengan penutupan celah data lapangan)
+
+Perubahan dicatat sesuai §20 dan menunggu persetujuan tim. Tidak ada fitur baru dan prioritas tidak berubah; perubahan hanya menyelaraskan rujukan dan dependensi data dengan ARCHITECTURE v1.2 (ADR AR-21–AR-27) dan SCHEMA v1.9.2-review.
+
+| No  | Bagian          | Perubahan                                                                                          | Alasan                                                                  |
+| --- | --------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| 11  | Tabel informasi | Dokumen terkait diperbarui menjadi ARCHITECTURE.md v1.2 dan SCHEMA.md v1.9.2-review                | Sinkronisasi versi                                                      |
+| 12  | §19             | Menambah dependensi no. 13 (kop surat, format nomor surat, contoh surat) dan no. 14 (logo website) | Dibutuhkan untuk §5.4.6 (PDF otomatis) dan §6.1 (beranda); AR-21, AR-22 |
 
 ## v1.1 — 10 November 2026 (Sinkronisasi PRD–Architecture–Schema)
 

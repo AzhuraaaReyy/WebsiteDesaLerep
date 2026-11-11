@@ -3,10 +3,10 @@
 # WEBSITE DESA LEREP
 
 **Lokasi:** Desa Lerep, Kecamatan Ungaran Barat, Kabupaten Semarang, Jawa Tengah  
-**Versi:** 1.1 — Final (Sinkronisasi)  
-**Tanggal:** 8 November 2026 (revisi sinkronisasi 10 November 2026)  
+**Versi:** 1.2 — Final (Penutupan Celah Data Lapangan)  
+**Tanggal:** 8 November 2026 (revisi sinkronisasi 10 November 2026; ADR AR-21–AR-27 11 November 2026)  
 **Status:** FINAL — LOCKED  
-**Acuan:** PRD v1.1 Final + 70 Keputusan Arsitektur (Q1–Q70) + AR-01–AR-20 + Sinkronisasi PRD–Architecture–Schema  
+**Acuan:** PRD v1.1 Final + 70 Keputusan Arsitektur (Q1–Q70) + AR-01–AR-27 + Sinkronisasi PRD–Architecture–Schema  
 **Strategi:** Evaluation-First, Production-Ready Later  
 **Target Deployment Evaluasi:** 22 November 2026
 
@@ -812,6 +812,7 @@ Audit log mencatat aktivitas penting, terutama:
 - Penghapusan terkontrol.
 - Pemberian, pencabutan, dan penggunaan mandat persetujuan.
 - Penerapan gambar tanda tangan scan.
+- Pengunggahan, penggantian, dan penghapusan file gambar tanda tangan scan (AR-23).
 - Pembuatan akses (signed URL) ke file privat, tanpa menyimpan URL-nya.
 
 Login dan logout admin tidak ditulis ulang oleh aplikasi; jejaknya diambil dari audit log Supabase Auth, yang dapat ditinjau melalui Supabase Dashboard atau dibaca backend untuk tampilan audit di dashboard admin (AR-18).
@@ -994,6 +995,10 @@ Gambar hasil scan tanda tangan hanya boleh diterapkan setelah persetujuan tercat
 
 Gambar scan tanda tangan bukan Tanda Tangan Elektronik tersertifikasi.
 
+**Template dokumen hasil (AR-22).** Tahap evaluasi memakai satu template surat keterangan umum untuk semua layanan yang dibuka secara online: kop surat desa, nomor surat, judul dokumen dari `public_services.output_document_name`, data pemohon, isi yang dibentuk dari `form_data` sesuai layanan, nama dan jabatan pejabat pemberi mandat, serta gambar tanda tangan scan bila diizinkan. Template disimpan sebagai aset kode backend, bukan data database. Dari desa cukup dibutuhkan kop surat, format nomor surat, dan satu contoh surat keterangan yang sudah disamarkan.
+
+**Penyimpanan tanda tangan scan (AR-23).** File gambar tanda tangan disimpan di bucket `private-service-documents` dan dirujuk oleh `village_officials.signature_image_path`. Hanya backend yang membacanya, saat membuat dokumen hasil; path dan file tidak pernah dikirim ke browser.
+
 Integrasi TTE tersertifikasi melalui BSrE atau PSrE merupakan pengembangan lanjutan, bukan implementasi evaluasi.
 
 ---
@@ -1014,11 +1019,11 @@ private-service-documents
 
 ## 10.2 Access Policy
 
-| Bucket                    | Akses                                               |
-| ------------------------- | --------------------------------------------------- |
-| public-media              | Publik sesuai kebijakan konten                      |
-| public-documents          | Publik untuk dokumen yang memang ditetapkan terbuka |
-| private-service-documents | Privat, hanya melalui otorisasi                     |
+| Bucket                    | Akses                                                                            |
+| ------------------------- | -------------------------------------------------------------------------------- |
+| public-media              | Publik sesuai kebijakan konten                                                   |
+| public-documents          | Publik untuk dokumen yang memang ditetapkan terbuka                              |
+| private-service-documents | Privat, hanya melalui otorisasi; juga menyimpan gambar tanda tangan scan (AR-23) |
 
 ## 10.3 Upload Flow
 
@@ -1168,6 +1173,10 @@ Data harus berasal dari sumber resmi atau dapat diverifikasi.
 Jika data batas resmi belum tersedia, implementasi batas administrasi tidak boleh menggunakan garis hasil perkiraan dan mengklaimnya sebagai batas resmi.
 
 Batas wilayah resmi disimpan sebagai berkas GeoJSON statis di frontend, bukan tabel database. Perubahan data batas memerlukan deployment ulang frontend.
+
+Peta resmi yang hanya tersedia sebagai gambar (misalnya Peta Dasar Desa Lerep program KOTAKU) boleh ditampilkan sebagai gambar di halaman profil, lengkap dengan keterangan sumber, tetapi tidak digambar ulang atau dijiplak menjadi garis batas di Leaflet (AR-27).
+
+Koordinat kantor desa disimpan pada `village_profiles.latitude`/`longitude` dan dipakai untuk peta kontak serta tautan petunjuk arah Google Maps (AR-21).
 
 ---
 
@@ -1727,6 +1736,18 @@ Keputusan tambahan dari sinkronisasi PRD–Architecture–Schema (10 November 20
 | AR-19 | Honeypot + CAPTCHA pada form publik; Schema Markup JSON-LD; print stylesheet untuk cetak halaman (P1)                                                                                                                                                 |
 | AR-20 | Status konten seragam di semua modul (termasuk galeri); preview section beranda dilakukan di dashboard tanpa status draft                                                                                                                             |
 
+Keputusan tambahan dari penutupan celah data lapangan (11 November 2026). Sumber: Laporan Prioritas Kebutuhan Data Revisi 2 dan Dokumentasi Temuan Data Lapangan. Tidak ada fitur atau tabel baru; seluruh kebutuhan sudah ada di PRD v1.1, dan jumlah tabel SCHEMA tetap 66 (SCHEMA v1.9.2). Status: diusulkan tim riset data; berlaku setelah disetujui tim pengembang sesuai §33 dan PRD §20.
+
+| ID    | Keputusan Tambahan                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AR-21 | Data profil yang diminta PRD tetapi belum berkolom disimpan di `village_profiles`: koordinat kantor (`latitude`, `longitude`), `whatsapp_number`, `logo_path`, dan `territory_info` (JSONB informasi wilayah PRF-03). Luas dusun di `hamlets.area_ha`. Semua angka hanya dari sumber resmi desa                                                                                                                                                                                        |
+| AR-22 | Dokumen PDF hasil layanan memakai satu template surat keterangan umum; judul per layanan dari `public_services.output_document_name`; template adalah aset kode backend                                                                                                                                                                                                                                                                                                                |
+| AR-23 | Gambar tanda tangan scan disimpan privat di bucket `private-service-documents` dan dirujuk `village_officials.signature_image_path`; hanya dibaca backend saat membuat PDF; perubahan dicatat di audit log                                                                                                                                                                                                                                                                             |
+| AR-24 | Formulir unduhan layanan disimpan sebagai `public_documents` (PDF) dan ditautkan melalui `public_services.form_document_id`                                                                                                                                                                                                                                                                                                                                                            |
+| AR-25 | Jam pelayanan (`office_hours`) dan jam operasional fasilitas (`operating_hours`) memakai satu struktur JSON per hari dengan zona `Asia/Jakarta` (SCHEMA §6.4.1)                                                                                                                                                                                                                                                                                                                        |
+| AR-26 | `budget_records.record_type` dibatasi `pendapatan`, `belanja`, `pembiayaan`; kolom `group_name` menampung kelompok/bidang; rincian baris tetap dicocokkan dengan dokumen APBDes resmi                                                                                                                                                                                                                                                                                                  |
+| AR-27 | Celah lain ditutup tanpa perubahan schema: status fasilitas di `description`; peta resmi berbentuk gambar ditampilkan sebagai gambar, bukan garis Leaflet; paket wisata dan homestay diringkas di deskripsi potensi Desa Wisata Lerep; agenda berhari pasaran diinput per kejadian setelah tanggal pasti didapat; anggaran HOK di deskripsi proyek; riwayat kepala desa di teks sejarah; statistik kunjungan wisata tidak dimodelkan; program kerja dan kegiatan lembaga tetap ditunda |
+
 ---
 
 # 30. Scope Exclusions
@@ -1773,6 +1794,8 @@ Beberapa informasi operasional harus disediakan sebelum implementasi atau deploy
 10. Data batas wilayah resmi.
 11. Akun admin.
 12. Konfigurasi GA4 dan Search Console.
+13. Kop surat desa, format nomor surat, dan satu contoh surat keterangan untuk template PDF hasil layanan (AR-22).
+14. Logo yang ditetapkan desa untuk website (AR-21).
 
 Nilai konfigurasi seperti endpoint, secret, domain, dan kredensial tidak ditanamkan secara permanen dalam source code.
 
@@ -1784,6 +1807,7 @@ Arsitektur ini ditetapkan berdasarkan:
 
 - PRD Website Desa Lerep v1.1 Final.
 - Keputusan sinkronisasi AR-11–AR-20 (10 November 2026).
+- Keputusan penutupan celah data lapangan AR-21–AR-27 (11 November 2026).
 - Seluruh keputusan arsitektur Q1–Q70.
 - Hasil PRD–Architecture Consistency Review delapan bagian.
 - Batasan tim tiga orang.
@@ -1808,7 +1832,7 @@ Validasi utama:
 
 Dengan disahkannya dokumen ini:
 
-1. `ARCHITECTURE.md` ditetapkan sebagai dokumen arsitektur final versi 1.1 (revisi sinkronisasi melalui ADR AR-11–AR-20).
+1. `ARCHITECTURE.md` ditetapkan sebagai dokumen arsitektur final versi 1.2 (revisi sinkronisasi melalui ADR AR-11–AR-20 dan penutupan celah data lapangan melalui ADR AR-21–AR-27).
 2. Seluruh keputusan Q1–Q70 menjadi acuan teknis implementasi.
 3. Keputusan tambahan hasil audit menjadi bagian resmi arsitektur.
 4. PRD v1.1 tetap menjadi sumber utama kebutuhan dan ruang lingkup produk.
@@ -1824,6 +1848,6 @@ Website Desa Lerep menggunakan arsitektur Modular Monolith dengan frontend Next.
 Arsitektur ini menjadi fondasi implementasi tahap evaluasi sekaligus menyediakan ruang pengembangan untuk kebutuhan website desa jangka panjang.
 
 **Dokumen: ARCHITECTURE.md**  
-**Versi: 1.1 Final (sinkronisasi 10 November 2026)**  
+**Versi: 1.2 Final (sinkronisasi 10 November 2026; ADR AR-21–AR-27 11 November 2026)**  
 **Status: LOCKED**  
 **Tanggal Penguncian: 8 November 2026**

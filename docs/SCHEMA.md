@@ -1,8 +1,8 @@
 # SCHEMA.md --- Website Desa Lerep
 
 > **Status:** Draft konsolidasi audit 12 domain + sinkronisasi PRD v1.1/ARCHITECTURE v1.1; belum locked\
-> **Versi:** 1.9.1-review\
-> **Tanggal:** 10 November 2026\
+> **Versi:** 1.9.2-review\
+> **Tanggal:** 11 November 2026 (v1.9.1: 10 November 2026)\
 > **Database:** Supabase PostgreSQL\
 > **Backend:** Go + Gin\
 > **Migration tool:** golang-migrate\
@@ -519,6 +519,30 @@ divalidasi Go
 
 `website_url` TEXT Yes ---
 
+`whatsapp_number` VARCHAR(30) Yes Nomor WhatsApp
+resmi desa (PRD
+§5.4.9, §6.10);
+bukan nomor
+pribadi tanpa
+izin
+
+`latitude` NUMERIC(10,7) Yes Koordinat kantor
+desa; -90 sampai
+90
+
+`longitude` NUMERIC(10,7) Yes Koordinat kantor
+desa; -180 sampai
+180
+
+`logo_path` TEXT Yes Storage path logo
+yang ditetapkan
+desa
+
+`territory_info` JSONB Yes Informasi wilayah
+PRF-03; struktur
+§6.4.2, divalidasi
+Go
+
 `history` TEXT Yes ---
 
 `vision` TEXT Yes ---
@@ -537,6 +561,17 @@ teknis yang ditegakkan dengan `CHECK(singleton_key IS TRUE)` dan
 bagian definisi kolom dan tidak tertinggal sebagai catatan saja.
 Perubahan penting membuat snapshot di `village_profile_versions` dalam
 transaksi yang sama.
+
+Kolom tambahan v1.9.2 (ARCHITECTURE AR-21): `latitude`/`longitude`
+adalah titik kantor desa untuk peta lokasi kantor dan petunjuk arah
+Google Maps (PRD §5.4.9); keduanya harus NULL bersama-sama atau terisi
+bersama-sama dan berada pada rentang valid, sama seperti kolom koordinat
+lain. `whatsapp_number` hanya berisi nomor yang dinyatakan desa sebagai
+kanal resmi. `logo_path` mengikuti kebijakan gambar konten §6.5.1 (SVG
+ditolak). `territory_info` menampung informasi lokasi dan wilayah PRF-03
+yang tidak membutuhkan relasi; CHECK
+`territory_info IS NULL OR jsonb_typeof(territory_info) = 'object'`.
+Setiap angka di dalamnya hanya diisi dari sumber resmi desa (PRD §14).
 
 #### B.2 `village_profile_versions`
 
@@ -600,6 +635,12 @@ organisasi
 
 `photo_path` TEXT Yes Storage path
 
+`signature_image_path` TEXT Yes Path private
+Storage gambar
+tanda tangan scan;
+hanya untuk pejabat
+pemberi mandat
+
 `term_start_date` DATE Yes ---
 
 `term_end_date` DATE Yes \>= `term_start_date`
@@ -616,6 +657,15 @@ bila keduanya ada
 Tambahkan `UNIQUE(id, hamlet_id)` sebagai target composite FK kepala
 dusun. `parent_official_id` tidak boleh menunjuk baris itu sendiri.
 Pejabat lama dipertahankan dengan `is_active = FALSE`, bukan dihapus.
+
+`signature_image_path` (v1.9.2, ARCHITECTURE AR-23) menunjuk object di
+bucket `private-service-documents`, bukan bucket publik. Kolom ini tidak
+pernah dikirim melalui endpoint publik; backend hanya membacanya saat
+membuat dokumen hasil layanan yang approval-nya memakai mandat dengan
+`allows_signature_scan = TRUE` dan `authorized_official_id` pejabat ini.
+Format mengikuti baris "Gambar tanda tangan scan" pada §6.5.1. Pengisian,
+penggantian, dan penghapusan path dicatat di `audit_logs` tanpa
+menyimpan signed URL.
 
 #### B.4 `hamlets`
 
@@ -643,6 +693,10 @@ normalisasi
 
 `photo_path` TEXT Yes Storage path
 
+`area_ha` NUMERIC(10,2) Yes Luas dusun (ha),
+\>= 0; hanya dari
+sumber resmi
+
 `is_active` BOOLEAN No `TRUE`
 
 `created_at` TIMESTAMPTZ No `now()`
@@ -657,6 +711,9 @@ Nama dusun harus unik setelah normalisasi melalui backend dan
 constraint/index yang sesuai. Jumlah penduduk tidak disimpan pada
 `hamlets`; sumber angka agregat penduduk berada pada
 `village_statistics` dan hanya diisi berdasarkan sumber resmi.
+`area_ha` (v1.9.2, AR-21) memiliki CHECK `area_ha IS NULL OR area_ha >= 0`;
+nilai dari GeoJSON kerja tim riset tidak dipakai sebelum sumbernya
+dikonfirmasi desa.
 
 #### B.5 `village_institutions`
 
@@ -1070,10 +1127,15 @@ Kolom Tipe Null Default / aturan
 
 `fiscal_year` SMALLINT No Tahun anggaran
 
-`record_type` VARCHAR(80) No Klasifikasi mengikuti
-dokumen resmi; daftar
-final tidak ditetapkan
-PRD
+`record_type` VARCHAR(30) No `pendapatan`,
+`belanja`,
+`pembiayaan`; CHECK
+(v1.9.2)
+
+`group_name` VARCHAR(150) Yes Kelompok/bidang
+induk sesuai
+dokumen resmi
+(v1.9.2)
 
 `category_name` VARCHAR(150) No Nama kategori/baris
 sesuai sumber resmi
@@ -1113,7 +1175,20 @@ Angka hanya boleh dipublikasikan jika dapat ditelusuri ke dokumen resmi.
 yang belum tersedia dari nol; keduanya memiliki CHECK \>= 0. Taksonomi
 `record_type` dan granularitas baris anggaran harus mengikuti format
 APBDes/dokumen resmi yang benar-benar diterima; jangan seed kategori
-atau angka rekaan. **Keputusan V-15:** `verified_by`
+atau angka rekaan.
+
+**Taksonomi v1.9.2 (ARCHITECTURE AR-26, V-01 sebagian):**
+`CHECK (record_type IN ('pendapatan','belanja','pembiayaan'))`.
+`group_name` menyimpan tingkat kelompok atau bidang (misalnya
+"Pendapatan Transfer" atau "Bidang Pelaksanaan Pembangunan Desa"),
+dan `category_name` menyimpan rincian di bawahnya. Struktur dua tingkat
+ini diambil dari infografis APBDes 2024 dan Realisasi 2023 yang
+diterima dari desa. Daftar nilai `group_name` dan rincian baris tetap
+dicocokkan dengan dokumen APBDes resmi sebelum seed; nilai infografis
+bukan sumber angka publikasi. Tambahkan index
+`(fiscal_year, record_type, group_name)` untuk ringkasan per bidang.
+
+**Keputusan V-15:** `verified_by`
 menggunakan `ON DELETE SET NULL` tanpa CHECK pasangan; `verified_at`
 boleh tetap terisi setelah akun verifier dihapus, sama dengan
 `village_statistics`.
@@ -1171,6 +1246,18 @@ bila relevan
 
 `service_fee` NUMERIC(15,2) Yes \>= 0
 
+`output_document_name` VARCHAR(200) Yes Judul dokumen
+hasil layanan,
+mis. "Surat
+Keterangan
+Kelahiran"
+(v1.9.2)
+
+`form_document_id` UUID Yes FK →
+`public_documents.id`,
+RESTRICT; formulir
+unduhan (v1.9.2)
+
 `is_active` BOOLEAN No `TRUE`
 
 `created_at` TIMESTAMPTZ No `now()`
@@ -1183,6 +1270,15 @@ bila relevan
 Go memvalidasi struktur dan isi JSON serta konfigurasi formulir dinamis.
 Konfigurasi layanan disalin sebagai snapshot ke permohonan saat
 pengajuan.
+
+Kolom v1.9.2: `output_document_name` adalah judul yang dicetak pada
+template surat keterangan umum (ARCHITECTURE AR-22) dan ikut disalin ke
+`service_snapshot`. `form_document_id` menautkan formulir unduhan
+(PRD §5.4.2, §5.4.6) ke dokumen PDF di `public_documents`, sehingga
+formulir memakai alur upload, validasi, dan status publikasi yang sama
+dengan dokumen publik (AR-24). Formulir hanya tampil di halaman layanan
+bila dokumen tersebut berstatus `published`. Tambahkan index pada
+`form_document_id` sesuai kebijakan index FK.
 
 #### E.3 `service_requests`
 
@@ -2373,7 +2469,10 @@ Kolom Tipe Null Default / aturan
 `updated_at` TIMESTAMPTZ No `now()`
 
 Koordinat wajib dan harus dalam rentang valid. Hanya fasilitas published
-yang ditampilkan pada peta publik. Leaflet + OpenStreetMap menjadi peta
+yang ditampilkan pada peta publik. Status kondisi fasilitas (PRD §5.8.B,
+"jika tersedia") ditulis di `description`, bukan kolom baru; `status`
+tetap status publikasi (AR-27). `operating_hours` mengikuti struktur
+§6.4.1. Leaflet + OpenStreetMap menjadi peta
 utama; Google Maps dibuka melalui external URL. GeoJSON batas desa
 adalah aset statis frontend. Tidak menggunakan PostGIS pada baseline.
 
@@ -2986,6 +3085,9 @@ Kolom Bentuk yang diharapkan Validasi
 `village_profile_versions.snapshot` JSON object DB + Go
 
 `village_profiles.office_hours` JSON object terstruktur Go
+(§6.4.1)
+
+`village_profiles.territory_info` JSON object (§6.4.2) DB + Go
 
 `public_services.requirements` JSON array DB + Go
 
@@ -3013,6 +3115,73 @@ key
 
 Jangan menggunakan JSONB untuk menggantikan relasi yang jelas atau untuk
 menyimpan seluruh data entitas secara tidak terstruktur.
+
+#### 6.4.1 Struktur jam pelayanan dan jam operasional (v1.9.2, AR-25)
+
+Dipakai `village_profiles.office_hours` dan
+`public_facilities.operating_hours`:
+
+```json
+{
+  "timezone": "Asia/Jakarta",
+  "days": [
+    { "day": "monday", "open": "08:00", "close": "15:00" },
+    { "day": "friday", "open": "08:00", "close": "11:00" }
+  ],
+  "notes": "Libur nasional tutup"
+}
+```
+
+- `day` salah satu dari `monday` sampai `sunday`; hari yang tidak
+  tercantum berarti tutup. Satu hari boleh muncul lebih dari sekali
+  untuk jam terpisah (misalnya istirahat siang).
+- `open` dan `close` berformat `HH:MM` 24 jam dan `close` > `open`.
+- `timezone` selalu `Asia/Jakarta` (ARCHITECTURE §8.12).
+- `notes` opsional, teks pendek tanpa HTML.
+- Seluruh aturan divalidasi Go; database hanya memastikan JSON object.
+
+#### 6.4.2 Struktur `village_profiles.territory_info` (v1.9.2, AR-21)
+
+```json
+{
+  "area_ha": 682.32,
+  "elevation_m": { "min": 310, "max": 940 },
+  "topography_ha": {
+    "flat": 127.12,
+    "undulating": 209.77,
+    "steep": 236.36,
+    "very_steep": 109.07
+  },
+  "temperature_c": { "min": 24, "max": 34 },
+  "distance_km": {
+    "district": 0.9,
+    "regency": 1.85,
+    "province": 18,
+    "capital": 471
+  },
+  "boundaries": {
+    "north": ["..."],
+    "east": ["..."],
+    "south": ["..."],
+    "west": ["..."]
+  },
+  "hamlet_count": 8,
+  "rw_count": 10,
+  "rt_count": null,
+  "source": "RPJMDes ...",
+  "as_of": "2026-01-01"
+}
+```
+
+- Contoh angka di atas berasal dari Form Profil Desa Wisata dan belum
+  diverifikasi; nilai produksi wajib dari sumber resmi desa dan
+  mencantumkan `source` serta `as_of`.
+- Semua kunci opsional; kunci yang belum ada datanya ditulis `null` atau
+  dihilangkan, bukan diisi perkiraan.
+- `boundaries` berisi nama wilayah tetangga sebagai teks. Garis batas
+  tetap hanya dari GeoJSON resmi (ARCHITECTURE §12.4).
+- Go memvalidasi tipe angka (\>= 0) dan daftar kunci yang dikenal;
+  kunci lain ditolak.
 
 ### 6.5 File dan Storage
 
@@ -3087,6 +3256,15 @@ pengaduan byte)
 
 Dokumen hasil PDF 5 MiB (5.242.880 Privat, setelah
 pelayanan byte) otorisasi
+
+Gambar tanda PNG (`image/png`), 5 MiB (5.242.880 Privat; hanya
+tangan scan JPEG (`image/jpeg`) byte) dibaca backend
+(v1.9.2) saat membuat PDF
+
+Formulir unduhan PDF 10 MiB (10.485.760 Publik setelah
+layanan (v1.9.2) (`application/pdf`) byte) published, sama
+seperti dokumen
+publik
 
 Video konten URL YouTube Tidak berlaku Sesuai publikasi
 tervalidasi; tanpa konten
@@ -3170,6 +3348,9 @@ PostgreSQL target
 
 `public_services` `(category_id, is_active)` Daftar layanan aktif
 
+`public_services` `(form_document_id)` Telusur formulir
+unduhan (v1.9.2)
+
 `service_requests` `(status, submitted_at DESC)` Antrian permohonan
 admin
 
@@ -3218,8 +3399,9 @@ privat
 
 `development_project_updates` `(project_id, reported_at DESC)` Riwayat perkembangan
 
-`budget_records` `(fiscal_year, record_type)` Ringkasan anggaran per
-tahun/jenis
+`budget_records` `(fiscal_year, record_type, group_name)` Ringkasan anggaran per
+tahun/jenis/bidang
+(v1.9.2)
 
 `budget_records` `(source_document_id)` Telusur dokumen sumber
 resmi
@@ -3557,14 +3739,27 @@ dashboard internal
 kompleks bukan scope
 evaluasi.
 
+Kontak resmi: peta kantor, `village_profiles.latitude`, Ditambahkan v1.9.2
+WhatsApp, logo (PRD §5.4.9, `longitude`, `whatsapp_number`, (ARCH AR-21).
+§6.10) `logo_path`
+
+Lokasi dan wilayah desa `village_profiles.territory_info`, Ditambahkan v1.9.2
+(PRD §5.1 PRF-03) `hamlets.area_ha` (AR-21); isi hanya dari
+sumber resmi.
+
+Formulir unduhan dan PDF `public_services.form_document_id`, Ditambahkan v1.9.2
+hasil (PRD §5.4.2, `output_document_name`; (AR-22, AR-23, AR-24).
+§5.4.6, §19 no. 10) `village_officials.signature_image_path`
+
 ---
 
 ### 9.2 Hal yang belum dapat dinyatakan final dari dokumen sumber
 
 1.  **Granularitas budget records:** PRD mewajibkan ringkasan/grafik
     anggaran berbasis dokumen resmi, tetapi tidak menentukan struktur
-    rincian APBDes. Kolom `record_type` dan `category_name` sengaja
-    fleksibel sampai contoh dokumen resmi tersedia.
+    rincian APBDes. Sejak v1.9.2, `record_type` dibatasi tiga nilai dan
+    `group_name` menampung kelompok/bidang; rincian `category_name`
+    tetap fleksibel sampai dokumen APBDes resmi tersedia.
 2.  **Aspirasi ticket-only tracking:** keputusan desain telah
     ditetapkan: tiket + kode verifikasi hash untuk warga tanpa akun,
     atau akun opsional yang terautentikasi. Nomor tiket saja tidak
@@ -3846,11 +4041,14 @@ diverifikasi
 
 ---
 
-V-01 Contoh dokumen APBDes dan Cocokkan `record_type`,
-realisasi resmi `category_name`, dan granularitas
-`budget_records` dengan dokumen
-aktual sebelum seed/import; PRD
-tidak menetapkan taxonomy rinci.
+V-01 Contoh dokumen APBDes dan **Sebagian selesai (v1.9.2).**
+realisasi resmi `record_type` ditetapkan tiga nilai
+dan `group_name` ditambahkan
+berdasarkan infografis APBDes
+2024 dan Realisasi 2023 dari desa.
+Rincian `category_name` tetap
+dicocokkan dengan dokumen APBDes
+resmi sebelum seed/import.
 
 V-02 Composite FK kepala dusun Desain relasi telah ditetapkan; uji
 migration bertahap dan perilaku
@@ -3914,7 +4112,47 @@ Catatan: V-05, V-10, dan V-11 telah diselesaikan pada v1.5–v1.6; nomor
 V-09 tidak pernah digunakan. Keputusan yang masih terbuka: V-01, V-02,
 V-03, V-04, V-06, V-07 (durasi retensi), dan V-12.
 
+### Penutupan celah data lapangan (v1.9.2)
+
+Celah berikut berasal dari Laporan Prioritas Kebutuhan Data Revisi 2
+dan Dokumentasi Temuan Data Lapangan (11 November 2026). Keputusan
+dicatat sebagai ADR AR-21 sampai AR-27 di ARCHITECTURE.md. Tidak ada
+tabel atau fitur baru; jumlah tabel tetap 66.
+
+| Celah                                         | Keputusan                                                                                      | ADR   |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------- | ----- |
+| Koordinat kantor desa                         | `village_profiles.latitude`, `longitude`                                                       | AR-21 |
+| Nomor WhatsApp resmi                          | `village_profiles.whatsapp_number`                                                             | AR-21 |
+| Informasi lokasi dan wilayah (PRF-03)         | `village_profiles.territory_info` (JSONB, §6.4.2) dan `hamlets.area_ha`                        | AR-21 |
+| Logo desa                                     | `village_profiles.logo_path`; logo yang dipakai ditetapkan desa                                | AR-21 |
+| Format PDF hasil layanan                      | Satu template surat keterangan umum; judul dari `public_services.output_document_name`         | AR-22 |
+| File tanda tangan scan                        | `village_officials.signature_image_path`, bucket privat                                        | AR-23 |
+| Formulir unduhan                              | `public_services.form_document_id` → `public_documents`                                        | AR-24 |
+| Struktur jam pelayanan dan operasional        | Struktur JSON §6.4.1                                                                           | AR-25 |
+| Rincian baris anggaran (V-01)                 | `record_type` CHECK + `group_name`; rincian tetap menunggu dokumen resmi                       | AR-26 |
+| Status fasilitas                              | Ditulis di `description`                                                                       | AR-27 |
+| Peta dasar berbentuk gambar                   | Ditampilkan sebagai gambar (`media_assets`) di halaman profil; tidak digambar ulang di Leaflet | AR-27 |
+| Paket wisata dan homestay                     | Ringkasan di deskripsi potensi Desa Wisata Lerep                                               | AR-27 |
+| Agenda berhari pasaran                        | Satu baris `events` per kejadian setelah tanggal pasti didapat                                 | AR-27 |
+| Anggaran HOK proyek                           | Ditulis di `development_projects.description`                                                  | AR-27 |
+| Riwayat kepala desa                           | Bagian dari teks `village_profiles.history`                                                    | AR-27 |
+| Statistik kunjungan wisata dan SK Desa Wisata | Tidak dimodelkan; SK Bupati masuk `public_documents` bila ada PDF                              | AR-27 |
+| Program kerja dan kegiatan lembaga            | Tetap ditunda (B.7–B.9)                                                                        | AR-27 |
+
 ---
+
+### Riwayat revisi v1.9.2-review
+
+- Menutup 17 celah data lapangan tanpa menambah tabel (lihat
+  "Penutupan celah data lapangan"). Kolom baru:
+  `village_profiles.whatsapp_number`, `latitude`, `longitude`,
+  `logo_path`, `territory_info`; `village_officials.signature_image_path`;
+  `hamlets.area_ha`; `budget_records.group_name`;
+  `public_services.output_document_name`, `form_document_id`.
+- `budget_records.record_type` dipersempit menjadi tiga nilai dengan
+  CHECK; V-01 sebagian selesai.
+- Menambahkan struktur JSON jam pelayanan (§6.4.1) dan informasi
+  wilayah (§6.4.2), serta dua baris kebijakan upload (§6.5.1).
 
 ### Riwayat revisi v1.9.1-review
 
@@ -4062,7 +4300,7 @@ V-03, V-04, V-06, V-07 (durasi retensi), dan V-12.
 ### Catatan penting
 
 - Dokumen ini telah disinkronkan dengan PRD.md v1.1 dan
-  ARCHITECTURE.md v1.1. Statusnya tetap review karena
+  ARCHITECTURE.md v1.2 (ADR AR-21 sampai AR-27). Statusnya tetap review karena
   beberapa keputusan teknis yang tidak dirinci sumber masih ditandai
   sebagai keputusan yang harus dikonfirmasi.
 - Jangan mengubah migration database hanya berdasarkan perubahan
@@ -4105,4 +4343,4 @@ Schema dapat dinyatakan siap diimplementasikan setelah:
 - [ ] Integration test memastikan aturan transaksi dan lifecycle
       berjalan.
 
-**Akhir dokumen --- SCHEMA_CONSOLIDATED_v1.9.1-review.md**
+**Akhir dokumen --- SCHEMA_CONSOLIDATED_v1.9.2-review.md**
