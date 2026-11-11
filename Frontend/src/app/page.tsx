@@ -1,10 +1,31 @@
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
+import { HeroSection } from "@/components/home/HeroSection";
+import { InfoDesaSection } from "@/components/home/InfoDesaSection";
+import { DayaTarikSection } from "@/components/home/DayaTarikSection";
+import { PetaWilayahSection } from "@/components/home/PetaWilayahSection";
+import { BeritaSection } from "@/components/home/BeritaSection";
+import { StrukturSection } from "@/components/home/StrukturSection";
+
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-8 text-center">
-      <h1 className="text-3xl font-bold tracking-tight">Website Desa Lerep</h1>
-      <p className="max-w-xl text-zinc-600 dark:text-zinc-400">
-        Fondasi frontend Next.js App Router dengan Tailwind CSS v4.
-      </p>
-    </main>
+    <>
+      <a
+        href="#konten"
+        className="sr-only z-[60] rounded-full bg-sogan-900 px-4 py-2 text-mori focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+      >
+        Lewati ke konten
+      </a>
+      <SiteHeader />
+      <main id="konten">
+        <HeroSection />
+        <InfoDesaSection />
+        <DayaTarikSection />
+        <PetaWilayahSection />
+        <BeritaSection />
+        <StrukturSection />
+      </main>
+      <SiteFooter />
+    </>
   );
 }

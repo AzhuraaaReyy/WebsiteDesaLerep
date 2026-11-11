@@ -3,18 +3,95 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ==========================================================================
+   Token desain Desa Wisata Lerep
+   Palet diambil dari logo DWL & motif batik sogan: cokelat sogan, oranye
+   kunyit, krem kain mori, emas, dan tosca daun.
+   ========================================================================== */
+@theme {
+  --color-mori: #fdf8ee;
+  --color-mori-2: #f8eedc;
+  --color-mori-3: #f1e1c4;
+  --color-sogan: #5a3416;
+  --color-sogan-700: #4a2a10;
+  --color-sogan-900: #36200d;
+  --color-sogan-soft: #7a5233;
+  --color-kunyit: #f28a2e;
+  --color-kunyit-600: #e0761b;
+  --color-kunyit-soft: #fcd9b0;
+  --color-emas: #d6a25c;
+  --color-emas-soft: #ecd3a8;
+  --color-tosca: #2aa594;
+  --color-tinta: #4b3a2c;
+
+  /* Warna data grafik — divalidasi CVD & kontras terhadap latar mori */
+  --color-grafik-1: #14907f;
+  --color-grafik-2: #d9731a;
+
+  --font-serif: var(--font-lora), "Georgia", serif;
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-kartu: 0 1px 0 rgb(90 52 22 / 0.04), 0 10px 30px -14px rgb(90 52 22 / 0.28);
+  --shadow-tombol: 0 8px 20px -8px rgb(224 118 27 / 0.6);
+}
+
 :root {
   color-scheme: light;
 }
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
 }
 
 body {
-  @apply bg-white text-zinc-900 antialiased;
+  @apply bg-mori font-sans text-tinta antialiased;
 }
 
-.dark body {
-  @apply bg-zinc-950 text-zinc-50;
+::selection {
+  background: var(--color-kunyit-soft);
+  color: var(--color-sogan-900);
+}
+
+/* Pita motif batik (border horizontal) — dipakai di header, footer, kartu. */
+.pita-batik {
+  background-image: url("/images/border-batik-h.jpg");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: center;
+}
+
+.pita-kembang {
+  background-image: url("/images/border-floral-h.jpg");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: center;
+}
+
+/* Tekstur titik halus untuk latar krem */
+.tekstur-mori {
+  background-image: radial-gradient(rgb(90 52 22 / 0.05) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* Isi indikator slide hero */
+@keyframes hero-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
