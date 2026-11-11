@@ -1,8 +1,8 @@
 # SCHEMA.md --- Website Desa Lerep
 
-> **Status:** Draft konsolidasi hasil audit 12 domain; belum locked\
-> **Versi:** 1.8.1-review\
-> **Tanggal:** 9 November 2026\
+> **Status:** Draft konsolidasi audit 12 domain + sinkronisasi PRD v1.1/ARCHITECTURE v1.1; belum locked\
+> **Versi:** 1.9.2-review\
+> **Tanggal:** 11 November 2026 (v1.9.1: 10 November 2026)\
 > **Database:** Supabase PostgreSQL\
 > **Backend:** Go + Gin\
 > **Migration tool:** golang-migrate\
@@ -28,7 +28,7 @@ berdasarkan 12 domain:
 7.  Village Potential & UMKM
 8.  Agenda & Events
 9.  Maps & Public Facilities
-10. Supporting Content & Interactions
+10. Supporting Content, Media & Website CMS
 11. Development & Village Territory
 12. System Operations & Governance
 
@@ -137,11 +137,10 @@ Semua PK tabel aplikasi menggunakan `DEFAULT gen_random_uuid()`, kecuali
   induknya, misalnya tabel junction.
 - Jangan menambahkan `deleted_at` ke semua tabel. Gunakan `is_active`
   atau status arsip bila sesuai kebutuhan.
-- Rekomendasi implementasi draft: `updated_at` diperbarui oleh
-  service/backend Go pada setiap operasi update; default `now()` hanya
-  mengisi nilai saat insert. ARCH belum mengunci pilihan
-  backend-vs-trigger secara eksplisit, sehingga mekanisme ini harus
-  dikonfirmasi sebelum migration final.
+- `updated_at` diperbarui oleh repository Go pada setiap operasi
+  UPDATE (`SET updated_at = now()`); default `now()` mengisi nilai saat
+  insert. Tidak menggunakan trigger database (keputusan V-13,
+  ARCHITECTURE AR-15).
 - Semua timestamp disimpan sebagai `TIMESTAMPTZ`; tampilan waktu lokal
   menggunakan `Asia/Jakarta`.
 - Nama/slug dinormalisasi dan divalidasi backend. Database tetap
@@ -353,7 +352,7 @@ Tabel aplikasi Kolom Referensi Delete action
 
 `complaint_status_histories` `changed_by` `auth.users(id)` SET NULL
 
-`aspirations` `applicant_user_id` `auth.users(id)` SET NULL
+`aspirations` `applicant_user_id` `auth.users(id)` RESTRICT
 
 `aspiration_status_histories` `changed_by` `auth.users(id)` SET NULL
 
@@ -382,10 +381,10 @@ Tabel aplikasi Kolom Referensi Delete action
 
 `village_institution_members` `created_by` `auth.users(id)` SET NULL
 
-`village_institution_programs` `created_by`, `auth.users(id)` SET NULL
+`village_institution_programs` (ditunda) `created_by`, `auth.users(id)` SET NULL
 `updated_by`
 
-`village_institution_activities` `created_by` `auth.users(id)` SET NULL
+`village_institution_activities` (ditunda) `created_by` `auth.users(id)` SET NULL
 
 `announcements` `created_by`, `auth.users(id)` SET NULL
 `updated_by`
@@ -520,6 +519,30 @@ divalidasi Go
 
 `website_url` TEXT Yes ---
 
+`whatsapp_number` VARCHAR(30) Yes Nomor WhatsApp
+resmi desa (PRD
+§5.4.9, §6.10);
+bukan nomor
+pribadi tanpa
+izin
+
+`latitude` NUMERIC(10,7) Yes Koordinat kantor
+desa; -90 sampai
+90
+
+`longitude` NUMERIC(10,7) Yes Koordinat kantor
+desa; -180 sampai
+180
+
+`logo_path` TEXT Yes Storage path logo
+yang ditetapkan
+desa
+
+`territory_info` JSONB Yes Informasi wilayah
+PRF-03; struktur
+§6.4.2, divalidasi
+Go
+
 `history` TEXT Yes ---
 
 `vision` TEXT Yes ---
@@ -538,6 +561,17 @@ teknis yang ditegakkan dengan `CHECK(singleton_key IS TRUE)` dan
 bagian definisi kolom dan tidak tertinggal sebagai catatan saja.
 Perubahan penting membuat snapshot di `village_profile_versions` dalam
 transaksi yang sama.
+
+Kolom tambahan v1.9.2 (ARCHITECTURE AR-21): `latitude`/`longitude`
+adalah titik kantor desa untuk peta lokasi kantor dan petunjuk arah
+Google Maps (PRD §5.4.9); keduanya harus NULL bersama-sama atau terisi
+bersama-sama dan berada pada rentang valid, sama seperti kolom koordinat
+lain. `whatsapp_number` hanya berisi nomor yang dinyatakan desa sebagai
+kanal resmi. `logo_path` mengikuti kebijakan gambar konten §6.5.1 (SVG
+ditolak). `territory_info` menampung informasi lokasi dan wilayah PRF-03
+yang tidak membutuhkan relasi; CHECK
+`territory_info IS NULL OR jsonb_typeof(territory_info) = 'object'`.
+Setiap angka di dalamnya hanya diisi dari sumber resmi desa (PRD §14).
 
 #### B.2 `village_profile_versions`
 
@@ -601,6 +635,12 @@ organisasi
 
 `photo_path` TEXT Yes Storage path
 
+`signature_image_path` TEXT Yes Path private
+Storage gambar
+tanda tangan scan;
+hanya untuk pejabat
+pemberi mandat
+
 `term_start_date` DATE Yes ---
 
 `term_end_date` DATE Yes \>= `term_start_date`
@@ -617,6 +657,15 @@ bila keduanya ada
 Tambahkan `UNIQUE(id, hamlet_id)` sebagai target composite FK kepala
 dusun. `parent_official_id` tidak boleh menunjuk baris itu sendiri.
 Pejabat lama dipertahankan dengan `is_active = FALSE`, bukan dihapus.
+
+`signature_image_path` (v1.9.2, ARCHITECTURE AR-23) menunjuk object di
+bucket `private-service-documents`, bukan bucket publik. Kolom ini tidak
+pernah dikirim melalui endpoint publik; backend hanya membacanya saat
+membuat dokumen hasil layanan yang approval-nya memakai mandat dengan
+`allows_signature_scan = TRUE` dan `authorized_official_id` pejabat ini.
+Format mengikuti baris "Gambar tanda tangan scan" pada §6.5.1. Pengisian,
+penggantian, dan penghapusan path dicatat di `audit_logs` tanpa
+menyimpan signed URL.
 
 #### B.4 `hamlets`
 
@@ -644,6 +693,10 @@ normalisasi
 
 `photo_path` TEXT Yes Storage path
 
+`area_ha` NUMERIC(10,2) Yes Luas dusun (ha),
+\>= 0; hanya dari
+sumber resmi
+
 `is_active` BOOLEAN No `TRUE`
 
 `created_at` TIMESTAMPTZ No `now()`
@@ -658,6 +711,9 @@ Nama dusun harus unik setelah normalisasi melalui backend dan
 constraint/index yang sesuai. Jumlah penduduk tidak disimpan pada
 `hamlets`; sumber angka agregat penduduk berada pada
 `village_statistics` dan hanya diisi berdasarkan sumber resmi.
+`area_ha` (v1.9.2, AR-21) memiliki CHECK `area_ha IS NULL OR area_ha >= 0`;
+nilai dari GeoJSON kerja tim riset tidak dipakai sebelum sumbernya
+dikonfirmasi desa.
 
 #### B.5 `village_institutions`
 
@@ -1071,10 +1127,15 @@ Kolom Tipe Null Default / aturan
 
 `fiscal_year` SMALLINT No Tahun anggaran
 
-`record_type` VARCHAR(80) No Klasifikasi mengikuti
-dokumen resmi; daftar
-final tidak ditetapkan
-PRD
+`record_type` VARCHAR(30) No `pendapatan`,
+`belanja`,
+`pembiayaan`; CHECK
+(v1.9.2)
+
+`group_name` VARCHAR(150) Yes Kelompok/bidang
+induk sesuai
+dokumen resmi
+(v1.9.2)
 
 `category_name` VARCHAR(150) No Nama kategori/baris
 sesuai sumber resmi
@@ -1114,12 +1175,23 @@ Angka hanya boleh dipublikasikan jika dapat ditelusuri ke dokumen resmi.
 yang belum tersedia dari nol; keduanya memiliki CHECK \>= 0. Taksonomi
 `record_type` dan granularitas baris anggaran harus mengikuti format
 APBDes/dokumen resmi yang benar-benar diterima; jangan seed kategori
-atau angka rekaan. **Catatan konsistensi yang masih perlu diputuskan:**
-rekomendasi audit sebelumnya meminta `verified_at` dan `verified_by`
-berpasangan, tetapi FK `verified_by` saat ini menggunakan
-`ON DELETE SET NULL`. Kedua aturan tersebut bertentangan saat akun
-verifier dihapus. Jangan tambahkan CHECK pasangan sebelum keputusan
-FK/retensi identitas verifier ditetapkan.
+atau angka rekaan.
+
+**Taksonomi v1.9.2 (ARCHITECTURE AR-26, V-01 sebagian):**
+`CHECK (record_type IN ('pendapatan','belanja','pembiayaan'))`.
+`group_name` menyimpan tingkat kelompok atau bidang (misalnya
+"Pendapatan Transfer" atau "Bidang Pelaksanaan Pembangunan Desa"),
+dan `category_name` menyimpan rincian di bawahnya. Struktur dua tingkat
+ini diambil dari infografis APBDes 2024 dan Realisasi 2023 yang
+diterima dari desa. Daftar nilai `group_name` dan rincian baris tetap
+dicocokkan dengan dokumen APBDes resmi sebelum seed; nilai infografis
+bukan sumber angka publikasi. Tambahkan index
+`(fiscal_year, record_type, group_name)` untuk ringkasan per bidang.
+
+**Keputusan V-15:** `verified_by`
+menggunakan `ON DELETE SET NULL` tanpa CHECK pasangan; `verified_at`
+boleh tetap terisi setelah akun verifier dihapus, sama dengan
+`village_statistics`.
 
 ### E. Public Services & Complaints
 
@@ -1174,6 +1246,18 @@ bila relevan
 
 `service_fee` NUMERIC(15,2) Yes \>= 0
 
+`output_document_name` VARCHAR(200) Yes Judul dokumen
+hasil layanan,
+mis. "Surat
+Keterangan
+Kelahiran"
+(v1.9.2)
+
+`form_document_id` UUID Yes FK →
+`public_documents.id`,
+RESTRICT; formulir
+unduhan (v1.9.2)
+
 `is_active` BOOLEAN No `TRUE`
 
 `created_at` TIMESTAMPTZ No `now()`
@@ -1186,6 +1270,15 @@ bila relevan
 Go memvalidasi struktur dan isi JSON serta konfigurasi formulir dinamis.
 Konfigurasi layanan disalin sebagai snapshot ke permohonan saat
 pengajuan.
+
+Kolom v1.9.2: `output_document_name` adalah judul yang dicetak pada
+template surat keterangan umum (ARCHITECTURE AR-22) dan ikut disalin ke
+`service_snapshot`. `form_document_id` menautkan formulir unduhan
+(PRD §5.4.2, §5.4.6) ke dokumen PDF di `public_documents`, sehingga
+formulir memakai alur upload, validasi, dan status publikasi yang sama
+dengan dokumen publik (AR-24). Formulir hanya tampil di halaman layanan
+bila dokumen tersebut berstatus `published`. Tambahkan index pada
+`form_document_id` sesuai kebijakan index FK.
 
 #### E.3 `service_requests`
 
@@ -1213,8 +1306,10 @@ tidak disimpan
 
 `applicant_name` VARCHAR(150) No ---
 
-`applicant_nik` VARCHAR(16) Yes Hanya jika diwajibkan
-jenis layanan
+`applicant_nik_encrypted` BYTEA Yes Ciphertext NIK
+(AES-256-GCM, nonce
+disertakan); hanya jika
+diwajibkan jenis layanan
 
 `applicant_phone` VARCHAR(30) No ---
 
@@ -1248,7 +1343,11 @@ Status yang diizinkan: `pending_verification`, `needs_revision`,
 dibuat tanpa akun. Tracking menggunakan ticket number dan kode
 verifikasi melalui POST body; kode verifikasi tidak boleh muncul di URL,
 log, atau response. Terapkan rate limit. Jangan pernah mengirim
-`admin_notes` melalui endpoint publik.
+`admin_notes` melalui endpoint publik. Kode verifikasi dibuat acak
+kriptografis dan disimpan sebagai HMAC-SHA256 dengan pepper server
+(ARCHITECTURE §9.5, AR-14). NIK dienkripsi di Go sebelum disimpan
+dengan kunci dari environment server, tidak pernah dicatat di log atau
+audit, dan ditampilkan tersamar kepada admin (AR-16).
 
 #### E.4 `service_request_documents`
 
@@ -1328,7 +1427,16 @@ eksplisit menandai informasi yang aman untuk ditampilkan; backend tetap
 wajib memfilter field sensitif dan tidak boleh menganggap
 `is_public = TRUE` sebagai izin untuk mengirim seluruh data.
 
+Transisi ke `rejected` atau `cancelled` wajib membawa alasan publik
+(ARCHITECTURE §9.3, AR-17):
+`CHECK (new_status NOT IN ('rejected','cancelled') OR (is_public AND notes IS NOT NULL AND btrim(notes) <> ''))`.
+Karena baris tersebut publik, `notes` pada transisi ini hanya berisi
+alasan yang layak dibaca pemohon; catatan internal disimpan di
+`service_requests.admin_notes`.
+
 #### E.6 `complaints`
+
+**Prioritas implementasi: P0** (PRD v1.1 §5.4.7).
 
 ---
 
@@ -1341,8 +1449,8 @@ Kolom Tipe Null Default / aturan
 `ticket_number` VARCHAR(50) No UNIQUE, bukan
 autentikasi
 
-`tracking_code_hash` TEXT No Hash kode
-pelacakan;
+`verification_code_hash` TEXT No HMAC kode
+verifikasi;
 plaintext tidak
 disimpan
 
@@ -1387,10 +1495,11 @@ resolved
 
 Pengaduan tidak anonim: nama dan nomor kontak wajib. NIK tidak
 dikumpulkan secara default. Pelacakan menggunakan ticket number dan kode
-verifikasi yang hash-nya disimpan di `tracking_code_hash`; ticket number
+verifikasi yang hash-nya disimpan di `verification_code_hash`; ticket number
 saja tidak memberi akses. Isi pengaduan dan riwayat internal hanya untuk
-petugas berwenang; `public_response` disaring secara eksplisit untuk
-pelapor. Validasi `resolved_at` dilakukan bersama perubahan status.
+petugas berwenang; hanya
+`complaint_status_histories.public_response` yang dikembalikan kepada
+pelapor melalui pelacakan. Validasi `resolved_at` dilakukan bersama perubahan status.
 
 #### E.7 `complaint_status_histories`
 
@@ -1430,7 +1539,10 @@ SET NULL
 ---
 
 Append-only. Status complaint dan insert history dilakukan atomik.
-Seluruh riwayat bersifat privat; tidak ada flag `is_public`.
+Kolom `notes` selalu privat (internal). Hanya `public_response` yang
+boleh dikembalikan kepada pelapor yang lolos verifikasi; tidak ada flag
+`is_public`. Penolakan wajib disertai tanggapan publik:
+`CHECK (new_status <> 'rejected' OR (public_response IS NOT NULL AND btrim(public_response) <> ''))`.
 
 #### E.8 `service_approval_delegations`
 
@@ -1438,8 +1550,17 @@ Mencatat **mandat persetujuan pelayanan** dari pejabat desa (Kepala Desa
 atau Carik sesuai kewenangannya) kepada akun petugas/admin yang diberi
 kewenangan menjalankan tindakan persetujuan. Pejabat pemberi mandat
 tidak diwajibkan memiliki akun Supabase. Satu baris mandat
-merepresentasikan satu mandat dengan periode terbatas dan ruang lingkup
+merepresentasikan satu penunjukan dengan periode dan ruang lingkup
 tertentu.
+
+**Model resmi (PRD v1.1 §5.4.6, ARCHITECTURE AR-11):** mandat adalah
+satu-satunya dasar persetujuan pelayanan. Pejabat memberikan mandat
+sekali; selama mandat berlaku dan belum dicabut, admin penerima mandat
+menyetujui atau menolak permohonan secara langsung tanpa keterlibatan
+pejabat per permohonan. Penunjukan cukup diberikan langsung oleh atasan
+(boleh lisan); surat mandat tidak wajib. Admin mengisi data penunjukan
+satu kali melalui dashboard. Kolom `allows_signature_scan` menandai apakah
+mandat mencakup izin penerapan gambar tanda tangan scan.
 
 **Pemisahan dari penugasan administratif:** rekomendasi/penunjukan
 seseorang untuk membantu pekerjaan rutin website (misalnya mengelola
@@ -1481,18 +1602,30 @@ scope kategori
 RESTRICT; wajib untuk
 scope layanan tertentu
 
-`authorization_reference` VARCHAR(255) No Nomor/referensi surat atau
-dasar mandat
+`authorization_basis` VARCHAR(30) No `direct_appointment`
+(default; penunjukan
+langsung/lisan) atau
+`written_letter`
+
+`authorization_reference` VARCHAR(255) Yes Nomor surat bila ada;
+wajib hanya untuk
+`written_letter`
 
 `authorization_document_path` TEXT Yes Private Storage path untuk
 bukti mandat, bila
 tersedia
 
+`allows_signature_scan` BOOLEAN No `FALSE`; izin
+penerapan gambar tanda
+tangan scan pada dokumen
+hasil
+
 `valid_from` TIMESTAMPTZ No Awal masa berlaku
 
-`valid_until` TIMESTAMPTZ No Akhir masa mandat wajib
-ditentukan dan harus \>
-`valid_from`
+`valid_until` TIMESTAMPTZ Yes Akhir masa berlaku bila
+ditentukan; NULL berarti
+berlaku sampai dicabut;
+harus \> `valid_from`
 
 `revoked_at` TIMESTAMPTZ Yes Waktu mandat dicabut; NULL
 berarti belum dicabut
@@ -1515,8 +1648,13 @@ CHECK scope: `all_services` mengharuskan kedua kolom layanan NULL;
 `service_category` mengharuskan `service_category_id` terisi dan
 `public_service_id` NULL; `specific_service` mengharuskan
 `public_service_id` terisi dan `service_category_id` NULL. CHECK masa
-berlaku memastikan `valid_until > valid_from`. Mandat dianggap berlaku
-pada waktu tindakan bila `valid_from <= decision_time < valid_until` dan
+berlaku memastikan `valid_until IS NULL OR valid_until > valid_from`.
+CHECK dasar penunjukan:
+`authorization_basis IN ('direct_appointment','written_letter')` dan
+`authorization_basis <> 'written_letter' OR authorization_reference IS NOT NULL`.
+Penunjukan dianggap berlaku pada waktu tindakan bila
+`valid_from <= decision_time`,
+`(valid_until IS NULL OR decision_time < valid_until)`, dan
 `revoked_at IS NULL OR decision_time < revoked_at`. Status kedaluwarsa
 dihitung dari periode, tidak disimpan sebagai status yang bisa tidak
 sinkron. Backend memverifikasi `delegate_user_id` adalah akun petugas
@@ -1532,10 +1670,10 @@ pada waktu keputusan, agar tidak ada dasar otorisasi yang ambigu.
 
 Mandat yang sudah pernah dipakai approval tidak boleh dihapus atau
 ditimpa; perubahan mandat dilakukan dengan pencabutan dan pembuatan
-mandat baru agar jejak historis tetap utuh. `authorization_reference`
-wajib untuk menyediakan dasar penelusuran. Bentuk bukti administrasi
-yang diterima (surat fisik, keputusan, atau bentuk lain) perlu mengikuti
-prosedur resmi desa.
+mandat baru agar jejak historis tetap utuh. Dasar penelusuran adalah
+`authorized_official_id`, `valid_from`, `created_by_user_id`, dan
+audit log pencatatan penunjukan; nomor surat bersifat opsional
+(keputusan v1.9.1, prinsip kemudahan bagi pemerintah desa).
 
 #### E.9 `service_request_approvals`
 
@@ -1573,7 +1711,9 @@ approval
 ---
 
 CHECK `decision IN ('approved','rejected')`; `signature_applied_at`
-hanya boleh terisi bila `decision = 'approved'`. `processed_by_user_id`
+hanya boleh terisi bila `decision = 'approved'` dan mandat yang dirujuk
+memiliki `allows_signature_scan = TRUE` (validasi Go dalam transaksi).
+`processed_by_user_id`
 harus sama dengan `delegate_user_id` pada mandat yang dirujuk. Pada
 `decided_at`, backend memverifikasi mandat sudah dimulai, belum
 berakhir/dicabut, dan scope mandat mencakup layanan pada pengajuan.
@@ -1663,6 +1803,9 @@ ukuran aktual.
 
 #### E.12 `aspirations`
 
+**Prioritas implementasi: P1** (PRD v1.1 §5.8.E). Migration dapat
+menyusul setelah tabel P0 stabil.
+
 ---
 
 Kolom Tipe Null Default / aturan
@@ -1683,7 +1826,7 @@ aspirasi account-only
 tidak kehilangan jalur
 akses
 
-`tracking_code_hash` TEXT Yes Hash kode verifikasi
+`verification_code_hash` TEXT Yes Hash kode verifikasi
 acak untuk jalur
 pelacakan tiket;
 plaintext tidak disimpan
@@ -1743,7 +1886,7 @@ verifikasi rahasia untuk warga tanpa akun; atau (2) akun opsional yang
 terhubung melalui `applicant_user_id`, dengan autentikasi dan otorisasi
 bahwa akun hanya dapat mengakses aspirasi miliknya. CHECK constraint
 harus memastikan setidaknya salah satu jalur tersedia:
-`applicant_user_id IS NOT NULL OR tracking_code_hash IS NOT NULL`. Untuk
+`applicant_user_id IS NOT NULL OR verification_code_hash IS NOT NULL`. Untuk
 jalur tiket, kode dibuat acak dengan entropi tinggi, ditampilkan satu
 kali saat pengajuan berhasil, lalu hanya hash yang disimpan; nomor tiket
 saja tidak pernah menjadi otorisasi. Endpoint publik menerima nomor
@@ -2326,11 +2469,14 @@ Kolom Tipe Null Default / aturan
 `updated_at` TIMESTAMPTZ No `now()`
 
 Koordinat wajib dan harus dalam rentang valid. Hanya fasilitas published
-yang ditampilkan pada peta publik. Leaflet + OpenStreetMap menjadi peta
+yang ditampilkan pada peta publik. Status kondisi fasilitas (PRD §5.8.B,
+"jika tersedia") ditulis di `description`, bukan kolom baru; `status`
+tetap status publikasi (AR-27). `operating_hours` mengikuti struktur
+§6.4.1. Leaflet + OpenStreetMap menjadi peta
 utama; Google Maps dibuka melalui external URL. GeoJSON batas desa
 adalah aset statis frontend. Tidak menggunakan PostGIS pada baseline.
 
-### J. Supporting Content & Interactions
+### J. Supporting Content, Media & Website CMS
 
 #### J.1 `faqs`
 
@@ -2379,7 +2525,7 @@ Kolom Tipe Null Default / aturan
 `title` VARCHAR(200) No Nama album
 `description` TEXT Yes ---
 `category` VARCHAR(100) Yes Kategori album
-`status` VARCHAR(30) No draft, published, archived
+`status` VARCHAR(30) No draft, review, published, archived
 `published_at` TIMESTAMPTZ Yes Wajib saat published
 `sort_order` INTEGER No `0`, \>= 0
 `created_by` UUID Yes FK → `auth.users.id`, SET NULL
@@ -2603,7 +2749,11 @@ NULL
 
 `section_key` hanya boleh merujuk komponen yang disediakan frontend.
 `config` divalidasi berdasarkan schema per section. Tidak memberi admin
-kemampuan menyusun layout bebas atau mengubah kode.
+kemampuan menyusun layout bebas atau mengubah kode. Tabel ini tidak
+memiliki status draft: preview dilakukan di dashboard dengan merender
+komponen dari isian formulir sebelum disimpan, dan perubahan yang
+disimpan langsung berlaku (PRD v1.1 §6.1, AR-20). Cache publik beranda
+direvalidasi setelah penyimpanan.
 
 #### J.9 `homepage_banners`
 
@@ -2874,6 +3024,12 @@ transaksi yang sama dengan perubahan domain. `audit_logs` tidak
 menggantikan tabel riwayat domain seperti status permohonan dan update
 pembangunan. Kebijakan retensi spesifik tetap ditunda.
 
+Log login/logout diambil dari audit log Supabase Auth, bukan ditulis
+ulang ke tabel ini (AR-18). Tabel ini wajib mencatat pemberian,
+pencabutan, dan penggunaan mandat; keputusan approval; penerapan tanda
+tangan scan; serta pembuatan akses ke file privat (tanpa menyimpan
+signed URL).
+
 ---
 
 ## 6. Constraint lintas tabel dan aturan khusus
@@ -2929,6 +3085,9 @@ Kolom Bentuk yang diharapkan Validasi
 `village_profile_versions.snapshot` JSON object DB + Go
 
 `village_profiles.office_hours` JSON object terstruktur Go
+(§6.4.1)
+
+`village_profiles.territory_info` JSON object (§6.4.2) DB + Go
 
 `public_services.requirements` JSON array DB + Go
 
@@ -2956,6 +3115,73 @@ key
 
 Jangan menggunakan JSONB untuk menggantikan relasi yang jelas atau untuk
 menyimpan seluruh data entitas secara tidak terstruktur.
+
+#### 6.4.1 Struktur jam pelayanan dan jam operasional (v1.9.2, AR-25)
+
+Dipakai `village_profiles.office_hours` dan
+`public_facilities.operating_hours`:
+
+```json
+{
+  "timezone": "Asia/Jakarta",
+  "days": [
+    { "day": "monday", "open": "08:00", "close": "15:00" },
+    { "day": "friday", "open": "08:00", "close": "11:00" }
+  ],
+  "notes": "Libur nasional tutup"
+}
+```
+
+- `day` salah satu dari `monday` sampai `sunday`; hari yang tidak
+  tercantum berarti tutup. Satu hari boleh muncul lebih dari sekali
+  untuk jam terpisah (misalnya istirahat siang).
+- `open` dan `close` berformat `HH:MM` 24 jam dan `close` > `open`.
+- `timezone` selalu `Asia/Jakarta` (ARCHITECTURE §8.12).
+- `notes` opsional, teks pendek tanpa HTML.
+- Seluruh aturan divalidasi Go; database hanya memastikan JSON object.
+
+#### 6.4.2 Struktur `village_profiles.territory_info` (v1.9.2, AR-21)
+
+```json
+{
+  "area_ha": 682.32,
+  "elevation_m": { "min": 310, "max": 940 },
+  "topography_ha": {
+    "flat": 127.12,
+    "undulating": 209.77,
+    "steep": 236.36,
+    "very_steep": 109.07
+  },
+  "temperature_c": { "min": 24, "max": 34 },
+  "distance_km": {
+    "district": 0.9,
+    "regency": 1.85,
+    "province": 18,
+    "capital": 471
+  },
+  "boundaries": {
+    "north": ["..."],
+    "east": ["..."],
+    "south": ["..."],
+    "west": ["..."]
+  },
+  "hamlet_count": 8,
+  "rw_count": 10,
+  "rt_count": null,
+  "source": "RPJMDes ...",
+  "as_of": "2026-01-01"
+}
+```
+
+- Contoh angka di atas berasal dari Form Profil Desa Wisata dan belum
+  diverifikasi; nilai produksi wajib dari sumber resmi desa dan
+  mencantumkan `source` serta `as_of`.
+- Semua kunci opsional; kunci yang belum ada datanya ditulis `null` atau
+  dihilangkan, bukan diisi perkiraan.
+- `boundaries` berisi nama wilayah tetangga sebagai teks. Garis batas
+  tetap hanya dari GeoJSON resmi (ARCHITECTURE §12.4).
+- Go memvalidasi tipe angka (\>= 0) dan daftar kunci yang dikenal;
+  kunci lain ditolak.
 
 ### 6.5 File dan Storage
 
@@ -3030,6 +3256,15 @@ pengaduan byte)
 
 Dokumen hasil PDF 5 MiB (5.242.880 Privat, setelah
 pelayanan byte) otorisasi
+
+Gambar tanda PNG (`image/png`), 5 MiB (5.242.880 Privat; hanya
+tangan scan JPEG (`image/jpeg`) byte) dibaca backend
+(v1.9.2) saat membuat PDF
+
+Formulir unduhan PDF 10 MiB (10.485.760 Publik setelah
+layanan (v1.9.2) (`application/pdf`) byte) published, sama
+seperti dokumen
+publik
 
 Video konten URL YouTube Tidak berlaku Sesuai publikasi
 tervalidasi; tanpa konten
@@ -3113,6 +3348,9 @@ PostgreSQL target
 
 `public_services` `(category_id, is_active)` Daftar layanan aktif
 
+`public_services` `(form_document_id)` Telusur formulir
+unduhan (v1.9.2)
+
 `service_requests` `(status, submitted_at DESC)` Antrian permohonan
 admin
 
@@ -3161,8 +3399,9 @@ privat
 
 `development_project_updates` `(project_id, reported_at DESC)` Riwayat perkembangan
 
-`budget_records` `(fiscal_year, record_type)` Ringkasan anggaran per
-tahun/jenis
+`budget_records` `(fiscal_year, record_type, group_name)` Ringkasan anggaran per
+tahun/jenis/bidang
+(v1.9.2)
 
 `budget_records` `(source_document_id)` Telusur dokumen sumber
 resmi
@@ -3266,13 +3505,19 @@ Dipakai oleh `public_documents`, `news_articles`, `announcements`,
 dan izin dilakukan Go API. Status konten tidak boleh dicampur dengan
 status operasional/kejadian.
 
+Status `review` bersifat opsional pada tahap evaluasi: Single Admin
+dapat memindahkan konten langsung dari `draft` ke `published`. Preview
+adalah tampilan pratinjau, bukan status. Lifecycle ini sama dengan PRD
+v1.1 §9.4 dan ARCHITECTURE §14.1.
+
 ### 8.2 Service request lifecycle
 
 `pending_verification`, `needs_revision`, `verified`, `in_progress`,
 `pending_approval`, `approved`, `completed`, `rejected`, `cancelled`.
 
 Transisi hanya melalui backend dan selalu menghasilkan history row dalam
-transaksi yang sama.
+transaksi yang sama. Transisi ke `rejected`/`cancelled` wajib membawa
+alasan publik (lihat E.5).
 
 ### 8.3 Complaint lifecycle
 
@@ -3304,14 +3549,16 @@ berbeda dari lifecycle publikasi proyek.
     authorization berdasarkan role.
 3.  Service role key hanya berada di server dan tidak pernah dikirim ke
     browser.
-4.  Terapkan RLS sebagai defense-in-depth sesuai model akses Supabase;
-    jangan membuat policy publik yang memberi akses langsung ke seluruh
-    tabel.
+4.  Terapkan RLS sebagai defense-in-depth sesuai §9.3 (baseline
+    evaluasi: deny-all untuk `anon`/`authenticated`, role runtime khusus
+    tanpa `BYPASSRLS`).
 5.  Endpoint publik hanya mengambil kolom dan baris yang memang boleh
     dipublikasikan.
 6.  PII permohonan dan pengaduan hanya tersedia bagi petugas berwenang.
-7.  Kode verifikasi disimpan sebagai hash dan dikirim hanya saat
-    diperlukan kepada pemohon.
+7.  Kode verifikasi disimpan sebagai HMAC-SHA256 dengan pepper server
+    dan hanya ditampilkan sekali saat pengajuan berhasil. Kolom hash
+    bernama seragam `verification_code_hash` pada `service_requests`,
+    `complaints`, dan `aspirations`.
 8.  Ticket number bukan kredensial untuk membaca data privat.
 9.  Audit log tidak boleh memuat rahasia atau data pribadi berlebihan.
 10. Rate limit endpoint tracking dan polling.
@@ -3319,6 +3566,8 @@ berbeda dari lifecycle publikasi proyek.
     berlaku singkat.
 12. Terapkan kebijakan retensi untuk dokumen layanan, pengaduan, dan
     audit log sesuai aturan yang berlaku.
+13. NIK disimpan sebagai ciphertext (`applicant_nik_encrypted`) dan
+    tidak pernah muncul di log, audit, atau respons publik.
 
 ---
 
@@ -3412,21 +3661,16 @@ dari mandat approval.
 `roles`/`user_roles`
 mengatur akses teknis,
 bukan bukti surat
-penunjukan. **Perlu
-pengesahan formal:**
-redaksi PRD saat ini
-mengarahkan approval
-oleh pejabat berwenang
-melalui akun aman;
-delegasi oleh admin
-harus disahkan melalui
-revisi PRD/ADR. Tanda
+penunjukan. **Telah
+disahkan** melalui PRD
+v1.1 §5.4.6 dan ADR
+AR-11. Tanda
 tangan scan bukan TTE
 tersertifikasi.
 
 Pengaduan dan bukti (PRD `complaints`, `complaint_documents`, Ditambahkan lampiran
 §5.4.7; ARCH §9.6) `complaint_status_histories` bukti dan hash kode
-pelacakan. Ticket number
+verifikasi. P0. Ticket number
 bukan otorisasi.
 
 Aspirasi (PRD §5.8.E; §7.4; `aspirations`, Terpisah dari pengaduan;
@@ -3495,14 +3739,27 @@ dashboard internal
 kompleks bukan scope
 evaluasi.
 
+Kontak resmi: peta kantor, `village_profiles.latitude`, Ditambahkan v1.9.2
+WhatsApp, logo (PRD §5.4.9, `longitude`, `whatsapp_number`, (ARCH AR-21).
+§6.10) `logo_path`
+
+Lokasi dan wilayah desa `village_profiles.territory_info`, Ditambahkan v1.9.2
+(PRD §5.1 PRF-03) `hamlets.area_ha` (AR-21); isi hanya dari
+sumber resmi.
+
+Formulir unduhan dan PDF `public_services.form_document_id`, Ditambahkan v1.9.2
+hasil (PRD §5.4.2, `output_document_name`; (AR-22, AR-23, AR-24).
+§5.4.6, §19 no. 10) `village_officials.signature_image_path`
+
 ---
 
 ### 9.2 Hal yang belum dapat dinyatakan final dari dokumen sumber
 
 1.  **Granularitas budget records:** PRD mewajibkan ringkasan/grafik
     anggaran berbasis dokumen resmi, tetapi tidak menentukan struktur
-    rincian APBDes. Kolom `record_type` dan `category_name` sengaja
-    fleksibel sampai contoh dokumen resmi tersedia.
+    rincian APBDes. Sejak v1.9.2, `record_type` dibatasi tiga nilai dan
+    `group_name` menampung kelompok/bidang; rincian `category_name`
+    tetap fleksibel sampai dokumen APBDes resmi tersedia.
 2.  **Aspirasi ticket-only tracking:** keputusan desain telah
     ditetapkan: tiket + kode verifikasi hash untuk warga tanpa akun,
     atau akun opsional yang terautentikasi. Nomor tiket saja tidak
@@ -3517,19 +3774,15 @@ evaluasi.
     Architecture hanya mengunci role awal `admin` dan RBAC-ready tanpa
     matriks permission. Tidak dibuat tabel permission pada baseline;
     perlu ADR bila dibutuhkan.
-5.  **Bentuk, cakupan, dan kesesuaian mandat approval:** keputusan
-    operasional saat ini adalah admin/petugas menjalankan approval
-    berdasarkan mandat tetap dari Kepala Desa atau Carik sesuai
-    kewenangannya. Rekomendasi/penunjukan untuk membantu pekerjaan
-    administratif (misalnya pengelolaan berita) tidak otomatis memberi
-    kewenangan approval. `roles`/`user_roles` mengatur akses teknis
-    website; tidak menjadi bukti formal penunjukan atau mandat. Schema
-    mencatat pejabat pemberi mandat, akun penerima mandat, referensi
-    mandat, masa berlaku, pencabutan, dan cakupan layanan. PRD saat ini
-    mengarahkan approval dilakukan pejabat berwenang melalui akun aman;
-    delegasi admin perlu disahkan melalui revisi PRD/ADR. Bentuk bukti
-    mandat dan cakupan (semua layanan/kategori/layanan tertentu) juga
-    harus dikonfirmasi sebelum endpoint approval dibuat.
+5.  **Mandat approval:** model telah disahkan (PRD v1.1 §5.4.6, ADR
+    AR-11): admin menyetujui berdasarkan mandat tetap Kepala Desa atau
+    Carik, tanpa persetujuan pejabat per permohonan.
+    Penunjukan cukup langsung dari atasan (boleh lisan) dan dicatat
+    sekali oleh admin di dashboard; surat mandat opsional. Penugasan
+    untuk pekerjaan administratif umum (mis. mengelola berita) tetap
+    tidak otomatis memberi kewenangan approval, dan `roles`/`user_roles`
+    tidak menjadi bukti penunjukan approval. Tidak ada dokumen yang
+    ditunggu dari desa untuk fitur ini.
 6.  **Status program lembaga dan status aspirasi:** kosakata status
     telah disepakati dan dicantumkan pada definisi tabel serta V-10. PRD
     tetap tidak menentukan daftar nilai tersebut; daftar ini merupakan
@@ -3538,14 +3791,10 @@ evaluasi.
 7.  **Target statistik:** dimensi gender/umur/pendidikan/pekerjaan dan
     dusun hanya diisi bila data agregat resmi tersedia. Jangan membuat
     data sintetis.
-8.  **RLS:** arah keputusan telah disepakati: runtime Go API menggunakan
-    role database dengan hak minimum dan tanpa `BYPASSRLS`; konteks JWT
-    pengguna yang telah diverifikasi diteruskan secara transaction-local
-    agar policy dapat memakai identitas pengguna. Detail
-    role/membership, grants, dan mekanisme `SET LOCAL ROLE` wajib diuji
-    pada Supabase sebelum migration. Jangan gunakan kredensial
-    `postgres`/`service_role` sebagai koneksi runtime normal dan jangan
-    membuka tabel privat ke `anon`.
+8.  **RLS:** baseline evaluasi ditetapkan (§9.3, ADR AR-12): RLS aktif
+    dengan deny-all untuk `anon`/`authenticated` dan role runtime khusus
+    tanpa `BYPASSRLS`. RLS berbasis identitas pengguna ditunda ke
+    pasca-evaluasi.
 9.  **Retensi file privat:** tidak ada penghapusan otomatis pada tahap
     evaluasi; penghapusan manual harus terotorisasi, beralasan,
     konsisten antara Storage dan metadata, serta tercatat di audit log.
@@ -3556,6 +3805,32 @@ evaluasi.
 ---
 
 ## 9.3 Keputusan desain RLS (V-08)
+
+### Baseline tahap evaluasi (ditetapkan, ADR AR-12)
+
+Baseline ini yang diimplementasikan pada migration awal:
+
+1.  `ENABLE ROW LEVEL SECURITY` pada seluruh tabel aplikasi di schema
+    `public`.
+2.  `REVOKE ALL` pada tabel aplikasi dari `anon` dan `authenticated`;
+    tidak dibuat policy untuk kedua role tersebut, sehingga Supabase
+    Data API tidak dapat membaca atau menulis data aplikasi.
+3.  Role runtime khusus (nama kerja `app_runtime`) dengan `LOGIN` dan
+    `NOBYPASSRLS`, bukan owner tabel. Privilege diberikan sesuai
+    kebutuhan; tabel append-only (`*_status_histories`,
+    `development_project_updates`, `audit_logs`) hanya mendapat
+    `SELECT` dan `INSERT`.
+4.  Satu policy permisif per tabel khusus untuk `app_runtime`
+    (`USING (true) WITH CHECK (true)`). Otorisasi per pengguna
+    sepenuhnya ditegakkan oleh Go API.
+5.  Kredensial migration/owner terpisah dan tidak dipakai runtime.
+6.  Kompatibilitas role runtime dengan Supabase connection pooler
+    diverifikasi saat konfigurasi VPS (ARCHITECTURE §5.5).
+
+### Desain lanjutan berbasis identitas pengguna (ditunda pasca-evaluasi)
+
+Bagian berikut tetap menjadi arah jangka panjang dan **tidak**
+diimplementasikan pada migration awal.
 
 **Keputusan arah desain disetujui:** gunakan _backend-enforced
 authorization_ bersama _database-enforced RLS_ dan prinsip _least
@@ -3639,10 +3914,13 @@ defense-in-depth).
 - Uji Storage private bucket secara terpisah; RLS PostgreSQL tidak
   menggantikan policy akses objek Storage.
 
-**Status V-08:** arah desain disepakati; implementasi policy dan
-konfigurasi role belum final sampai pengujian koneksi Supabase/pgx serta
-matriks akses selesai. Tidak ada policy SQL spesifik yang diklaim sudah
-diterapkan.
+**Status V-08:** baseline evaluasi ditetapkan dan siap dimigrasikan;
+desain RLS berbasis identitas pengguna ditunda. Pengujian baseline
+wajib membuktikan: (1) `anon`/`authenticated` tidak dapat membaca atau
+menulis tabel aplikasi melalui Data API; (2) role runtime bukan owner
+dan tidak memiliki `BYPASSRLS`; (3) role runtime tidak memiliki
+UPDATE/DELETE pada tabel append-only; (4) koneksi pgx/pooler dengan
+role runtime berfungsi.
 
 ---
 
@@ -3722,8 +4000,8 @@ Urutan migration disarankan:
     dan budget records.
 7.  Domain E: service catalog/requests, request documents/histories,
     approval delegations, approvals/result documents,
-    complaints/attachments/histories, aspirations/histories, dan
-    notifications.
+    complaints/attachments/histories (P0), aspirations/histories (P1,
+    dapat menyusul), dan notifications.
 8.  Buat tabel `media_assets` (secara fisik dapat ditempatkan pada
     migration fondasi media) sebelum membuat junction media yang masuk
     scope awal: `news_article_media`, `village_potential_media`,
@@ -3741,7 +4019,8 @@ Urutan migration disarankan:
 14. Domain K: development projects/updates dan
     `development_project_media`.
 15. Domain L: audit logs.
-16. Index tambahan, policies/RLS, seed data, dan validasi constraint.
+16. Index tambahan, RLS baseline evaluasi (§9.3), grants role runtime,
+    seed data, dan validasi constraint.
 
 Setiap migration harus memiliki pasangan `up` dan `down`. Operasi
 destructive pada data produksi harus ditinjau khusus; rollback schema
@@ -3762,11 +4041,14 @@ diverifikasi
 
 ---
 
-V-01 Contoh dokumen APBDes dan Cocokkan `record_type`,
-realisasi resmi `category_name`, dan granularitas
-`budget_records` dengan dokumen
-aktual sebelum seed/import; PRD
-tidak menetapkan taxonomy rinci.
+V-01 Contoh dokumen APBDes dan **Sebagian selesai (v1.9.2).**
+realisasi resmi `record_type` ditetapkan tiga nilai
+dan `group_name` ditambahkan
+berdasarkan infografis APBDes
+2024 dan Realisasi 2023 dari desa.
+Rincian `category_name` tetap
+dicocokkan dengan dokumen APBDes
+resmi sebelum seed/import.
 
 V-02 Composite FK kepala dusun Desain relasi telah ditetapkan; uji
 migration bertahap dan perilaku
@@ -3799,47 +4081,117 @@ desa dan ketentuan yang berlaku.
 Retensi audit log dan backup
 ditetapkan terpisah.
 
-V-08 RLS Arah desain disepakati: Go
-authorization + RLS + least
-privilege tanpa `BYPASSRLS`. Nama
-role, grants, policies per tabel,
-dan pengujian `pgx/pgxpool` masih
-harus diselesaikan sebelum
-migration final.
+V-08 RLS **Selesai untuk evaluasi.** Baseline
+deny-all + role runtime khusus
+(§9.3, AR-12). RLS per identitas
+ditunda pasca-evaluasi.
 
 V-12 Unique statistik berdimensi Desain unique expression index dan
 sentinel telah ditetapkan; uji pada
 versi PostgreSQL Supabase target
 sebelum migration final.
 
-V-13 Mekanisme `updated_at` Belum dipilih secara eksplisit
-antara update melalui backend Go
-atau trigger database. Tetapkan
-satu mekanisme konsisten sebelum
-migration final.
+V-13 Mekanisme `updated_at` **Selesai.** Diperbarui oleh
+repository Go; tanpa trigger
+(AR-15).
 
-V-14 Kesesuaian PRD, bukti, dan Desain operasional mencatat
-cakupan mandat approval admin/petugas melakukan approval
-berdasarkan mandat Kepala Desa atau
-Carik. Perubahan dari redaksi PRD
-saat ini harus disahkan melalui
-revisi PRD/ADR; bentuk bukti dan
-cakupan mandat perlu dikonfirmasi
-sebelum endpoint approval dibuat.
+V-14 Model mandat approval **Selesai.** Disahkan PRD v1.1
+§5.4.6 dan AR-11. Penunjukan
+langsung (lisan) cukup; surat
+opsional. Tidak ada dependensi
+data desa.
 
-V-15 `budget_records.verified_at` Ada konflik antara CHECK pasangan
-dan `verified_by` yang disetujui pada audit Domain D
-dan FK
-`verified_by ON DELETE SET NULL`.
-Rekomendasi konsistensi adalah
-mempertahankan SET NULL dan
-mengizinkan `verified_at` tetap
-terisi setelah akun dihapus,
-seperti `village_statistics`;
-jangan menerapkan CHECK pasangan
-sebelum keputusan ini dikonfirmasi.
+V-15 `budget_records.verified_at` **Selesai.** `verified_by` tetap
+dan `verified_by` `ON DELETE SET NULL` tanpa CHECK
+pasangan, sama dengan
+`village_statistics`.
 
 ---
+
+Catatan: V-05, V-10, dan V-11 telah diselesaikan pada v1.5–v1.6; nomor
+V-09 tidak pernah digunakan. Keputusan yang masih terbuka: V-01, V-02,
+V-03, V-04, V-06, V-07 (durasi retensi), dan V-12.
+
+### Penutupan celah data lapangan (v1.9.2)
+
+Celah berikut berasal dari Laporan Prioritas Kebutuhan Data Revisi 2
+dan Dokumentasi Temuan Data Lapangan (11 November 2026). Keputusan
+dicatat sebagai ADR AR-21 sampai AR-27 di ARCHITECTURE.md. Tidak ada
+tabel atau fitur baru; jumlah tabel tetap 66.
+
+| Celah                                         | Keputusan                                                                                      | ADR   |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------- | ----- |
+| Koordinat kantor desa                         | `village_profiles.latitude`, `longitude`                                                       | AR-21 |
+| Nomor WhatsApp resmi                          | `village_profiles.whatsapp_number`                                                             | AR-21 |
+| Informasi lokasi dan wilayah (PRF-03)         | `village_profiles.territory_info` (JSONB, §6.4.2) dan `hamlets.area_ha`                        | AR-21 |
+| Logo desa                                     | `village_profiles.logo_path`; logo yang dipakai ditetapkan desa                                | AR-21 |
+| Format PDF hasil layanan                      | Satu template surat keterangan umum; judul dari `public_services.output_document_name`         | AR-22 |
+| File tanda tangan scan                        | `village_officials.signature_image_path`, bucket privat                                        | AR-23 |
+| Formulir unduhan                              | `public_services.form_document_id` → `public_documents`                                        | AR-24 |
+| Struktur jam pelayanan dan operasional        | Struktur JSON §6.4.1                                                                           | AR-25 |
+| Rincian baris anggaran (V-01)                 | `record_type` CHECK + `group_name`; rincian tetap menunggu dokumen resmi                       | AR-26 |
+| Status fasilitas                              | Ditulis di `description`                                                                       | AR-27 |
+| Peta dasar berbentuk gambar                   | Ditampilkan sebagai gambar (`media_assets`) di halaman profil; tidak digambar ulang di Leaflet | AR-27 |
+| Paket wisata dan homestay                     | Ringkasan di deskripsi potensi Desa Wisata Lerep                                               | AR-27 |
+| Agenda berhari pasaran                        | Satu baris `events` per kejadian setelah tanggal pasti didapat                                 | AR-27 |
+| Anggaran HOK proyek                           | Ditulis di `development_projects.description`                                                  | AR-27 |
+| Riwayat kepala desa                           | Bagian dari teks `village_profiles.history`                                                    | AR-27 |
+| Statistik kunjungan wisata dan SK Desa Wisata | Tidak dimodelkan; SK Bupati masuk `public_documents` bila ada PDF                              | AR-27 |
+| Program kerja dan kegiatan lembaga            | Tetap ditunda (B.7–B.9)                                                                        | AR-27 |
+
+---
+
+### Riwayat revisi v1.9.2-review
+
+- Menutup 17 celah data lapangan tanpa menambah tabel (lihat
+  "Penutupan celah data lapangan"). Kolom baru:
+  `village_profiles.whatsapp_number`, `latitude`, `longitude`,
+  `logo_path`, `territory_info`; `village_officials.signature_image_path`;
+  `hamlets.area_ha`; `budget_records.group_name`;
+  `public_services.output_document_name`, `form_document_id`.
+- `budget_records.record_type` dipersempit menjadi tiga nilai dengan
+  CHECK; V-01 sebagian selesai.
+- Menambahkan struktur JSON jam pelayanan (§6.4.1) dan informasi
+  wilayah (§6.4.2), serta dua baris kebijakan upload (§6.5.1).
+
+### Riwayat revisi v1.9.1-review
+
+- Penunjukan admin pemberi approval cukup langsung dari atasan (boleh
+  lisan); surat mandat tidak wajib. Menambahkan
+  `service_approval_delegations.authorization_basis`; menjadikan
+  `authorization_reference` dan `valid_until` nullable (NULL = berlaku
+  sampai dicabut); memperbarui CHECK dan aturan keberlakuan.
+- Surat mandat dihapus dari dependensi data desa (PRD v1.1 §19).
+
+### Riwayat revisi v1.9-review
+
+- Sinkronisasi dengan PRD v1.1 dan ARCHITECTURE v1.1 (ADR AR-11 s.d.
+  AR-20). Jumlah tabel tetap 66.
+- V-14 selesai: mandat adalah satu-satunya dasar approval; menambahkan
+  kolom `service_approval_delegations.allows_signature_scan` dan aturan
+  penerapan tanda tangan scan pada E.9.
+- V-08 selesai untuk evaluasi: RLS baseline deny-all untuk
+  `anon`/`authenticated` + role runtime khusus; desain berbasis
+  identitas ditunda.
+- V-13 selesai: `updated_at` oleh repository Go tanpa trigger.
+- V-15 selesai: `budget_records.verified_by` SET NULL tanpa paired
+  CHECK.
+- Memperbaiki kontradiksi FK `aspirations.applicant_user_id` pada §4.1
+  menjadi RESTRICT (sesuai E.12).
+- Mengganti nama kolom `tracking_code_hash` menjadi
+  `verification_code_hash` pada `complaints` dan `aspirations`;
+  menetapkan HMAC-SHA256 + pepper.
+- Mengganti `service_requests.applicant_nik` menjadi
+  `applicant_nik_encrypted BYTEA` (AES-256-GCM).
+- Menambahkan CHECK alasan publik untuk transisi `rejected`/`cancelled`
+  pada riwayat permohonan dan `rejected` pada riwayat pengaduan;
+  memperjelas privasi `notes` vs `public_response` pengaduan.
+- Menambahkan status `review` pada `galleries`; menegaskan `review`
+  opsional dan preview bukan status.
+- Menegaskan mekanisme preview `homepage_sections` tanpa status draft.
+- Menegaskan sumber log login/logout dan cakupan wajib `audit_logs`.
+- Menandai prioritas: pengaduan P0, aspirasi P1; menandai tabel lembaga
+  yang ditunda pada §4.1; menyeragamkan nama Domain J.
 
 ### Riwayat revisi v1.8.1-review
 
@@ -3947,8 +4299,8 @@ sebelum keputusan ini dikonfirmasi.
 
 ### Catatan penting
 
-- Dokumen ini telah dibandingkan secara langsung dengan PRD.md dan
-  ARCHITECTURE.md yang dilampirkan. Statusnya tetap review karena
+- Dokumen ini telah disinkronkan dengan PRD.md v1.1 dan
+  ARCHITECTURE.md v1.2 (ADR AR-21 sampai AR-27). Statusnya tetap review karena
   beberapa keputusan teknis yang tidak dirinci sumber masih ditandai
   sebagai keputusan yang harus dikonfirmasi.
 - Jangan mengubah migration database hanya berdasarkan perubahan
@@ -3961,10 +4313,8 @@ sebelum keputusan ini dikonfirmasi.
   atau integration test telah dibuat/dijalankan.
 - Tiga tabel program/aktivitas lembaga tetap dihitung dalam 66 tabel
   model lengkap, tetapi implementasinya ditunda dari tahap awal.
-- Keputusan `budget_records.verified_at`/`verified_by` masih terbuka
-  karena paired CHECK berbenturan dengan FK `ON DELETE SET NULL`;
-  rekomendasi konsistensi adalah mempertahankan SET NULL tanpa paired
-  CHECK, tetapi perlu konfirmasi pengguna.
+- Keputusan `budget_records.verified_at`/`verified_by` telah ditetapkan
+  pada v1.9 (SET NULL tanpa paired CHECK).
 
 ---
 
@@ -3984,7 +4334,7 @@ Schema dapat dinyatakan siap diimplementasikan setelah:
 - [ ] Approval, dokumen hasil layanan, aspirasi, notifikasi, lampiran
       pengaduan, pengumuman, budget records, dan media junction telah
       diuji.
-- [ ] RLS dan authorization API telah diuji.
+- [ ] RLS baseline evaluasi (§9.3) dan authorization API telah diuji.
 - [ ] Tidak ada secret atau PII berlebihan pada audit log.
 - [ ] Migration `up` dan `down` diuji pada database development
       kosong.
@@ -3993,4 +4343,4 @@ Schema dapat dinyatakan siap diimplementasikan setelah:
 - [ ] Integration test memastikan aturan transaksi dan lifecycle
       berjalan.
 
-**Akhir dokumen --- SCHEMA_CONSOLIDATED_v1.8.1-review.md**
+**Akhir dokumen --- SCHEMA_CONSOLIDATED_v1.9.2-review.md**
