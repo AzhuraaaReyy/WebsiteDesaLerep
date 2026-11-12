@@ -2,7 +2,7 @@
 
 > **Status:** Draft konsolidasi audit 12 domain + sinkronisasi PRD v1.1/ARCHITECTURE v1.1; belum locked\
 > **Versi:** 1.9.2-review\
-> **Tanggal:** 11 November 2026 (v1.9.1: 10 November 2026)\
+> **Tanggal:** 11 November 2026, tambahan 12 November 2026 (v1.9.1: 10 November 2026)\
 > **Database:** Supabase PostgreSQL\
 > **Backend:** Go + Gin\
 > **Migration tool:** golang-migrate\
@@ -1280,6 +1280,16 @@ dengan dokumen publik (AR-24). Formulir hanya tampil di halaman layanan
 bila dokumen tersebut berstatus `published`. Tambahkan index pada
 `form_document_id` sesuai kebijakan index FK.
 
+Klasifikasi `service_type` (tambahan 12 November 2026, ARCHITECTURE
+AR-28): `direct` untuk layanan yang diselesaikan di kantor desa;
+`facilitation` untuk layanan yang suratnya diterbitkan desa lalu
+berlanjut ke kecamatan, dinas, atau instansi lain; `referral` untuk
+layanan yang diurus langsung di instansi lain. Layanan `referral` wajib
+mengisi `external_reference_url`:
+`CONSTRAINT chk_public_services_referral_url CHECK (service_type <> 'referral' OR external_reference_url IS NOT NULL)`.
+Layanan `referral` hanya informatif dan tidak dapat diajukan (lihat
+E.3).
+
 #### E.3 `service_requests`
 
 ---
@@ -1347,7 +1357,9 @@ log, atau response. Terapkan rate limit. Jangan pernah mengirim
 kriptografis dan disimpan sebagai HMAC-SHA256 dengan pepper server
 (ARCHITECTURE §9.5, AR-14). NIK dienkripsi di Go sebelum disimpan
 dengan kunci dari environment server, tidak pernah dicatat di log atau
-audit, dan ditampilkan tersamar kepada admin (AR-16).
+audit, dan ditampilkan tersamar kepada admin (AR-16). Permohonan hanya
+dapat dibuat untuk layanan aktif berjenis `direct` atau `facilitation`;
+Go menolak layanan `referral` dengan 422 (AR-28).
 
 #### E.4 `service_request_documents`
 
@@ -4139,9 +4151,28 @@ tabel atau fitur baru; jumlah tabel tetap 66.
 | Statistik kunjungan wisata dan SK Desa Wisata | Tidak dimodelkan; SK Bupati masuk `public_documents` bila ada PDF                              | AR-27 |
 | Program kerja dan kegiatan lembaga            | Tetap ditunda (B.7–B.9)                                                                        | AR-27 |
 
+### Katalog layanan (tambahan 12 November 2026)
+
+Sumber: papan Standar Pelayanan di kantor desa, leaflet Disdukcapil
+Kabupaten Semarang, dan keterangan Carik (Laporan Prioritas Kebutuhan
+Data Revisi 3). Keputusan dicatat sebagai ADR AR-28. Tidak ada tabel
+atau kolom baru; jumlah tabel tetap 66.
+
+| Kebutuhan                          | Keputusan                                                                                                      | ADR   |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------- | ----- |
+| Arti `service_type`                | `direct` selesai di kantor desa; `facilitation` berlanjut ke instansi lain; `referral` diurus di instansi lain | AR-28 |
+| Layanan rujukan tanpa tautan       | `chk_public_services_referral_url`                                                                             | AR-28 |
+| Pengajuan layanan rujukan          | Ditolak Go (422); tidak ada `service_requests` untuk `referral`                                                | AR-28 |
+| Seed katalog awal                  | 13 layanan surat keterangan desa dan 17 layanan rujukan Disdukcapil; kategori dari PRD §5.4.1                  | AR-28 |
+| Aplikasi pelayanan lain milik desa | Tidak dimodelkan dan tidak diintegrasikan                                                                      | AR-28 |
+
 ---
 
 ### Riwayat revisi v1.9.2-review
+
+- Tambahan 12 November 2026: definisi `service_type`, CHECK
+  `chk_public_services_referral_url`, dan aturan bahwa layanan
+  `referral` tidak dapat diajukan (AR-28; lihat "Katalog layanan").
 
 - Menutup 17 celah data lapangan tanpa menambah tabel (lihat
   "Penutupan celah data lapangan"). Kolom baru:
