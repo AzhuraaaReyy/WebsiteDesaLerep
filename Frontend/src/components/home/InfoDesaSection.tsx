@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, BookOpen, Landmark, Mountain } from "lucide-react";
-import { CornerOrnament, SectionHeading } from "@/components/ornament/Ornaments";
+import { CardCorners, SectionHeading } from "@/components/ornament/Ornaments";
 import { infoDesa } from "@/data/site";
 
 const icons = { book: BookOpen, mountain: Mountain, landmark: Landmark };
@@ -22,11 +22,10 @@ export function InfoDesaSection() {
             return (
               <article
                 key={item.title}
-                className="group relative overflow-hidden rounded-2xl border border-emas-soft bg-mori shadow-kartu transition duration-300 hover:-translate-y-1 hover:border-emas sm:max-lg:last:col-span-2"
+                className="group relative isolate overflow-hidden rounded-2xl border border-emas-soft bg-mori shadow-kartu transition duration-300 hover:-translate-y-1 hover:border-emas sm:max-lg:last:col-span-2"
               >
                 <div className="pita-batik h-2" aria-hidden="true" />
-                <CornerOrnament position="tl" className="top-4" />
-                <CornerOrnament position="br" />
+                <CardCorners tl={{ className: "top-2" }} />
                 <div className="px-6 pb-8 pt-10 sm:px-7">
                   <span className="grid size-12 place-items-center rounded-full bg-sogan-900 text-mori ring-4 ring-kunyit-soft/70 transition group-hover:bg-kunyit">
                     <Icon className="size-5" />

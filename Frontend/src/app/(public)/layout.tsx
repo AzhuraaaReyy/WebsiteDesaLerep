@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { TombolWhatsApp } from "@/components/layout/TombolWhatsApp";
 
 /** Tata letak halaman publik (selain beranda): navbar + konten + footer. */
 export default function PublicLayout({ children }: Readonly<{ children: ReactNode }>) {
@@ -15,6 +16,7 @@ export default function PublicLayout({ children }: Readonly<{ children: ReactNod
       <SiteHeader />
       <main id="konten">{children}</main>
       <SiteFooter />
+      <TombolWhatsApp />
     </>
   );
 }

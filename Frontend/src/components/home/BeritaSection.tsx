@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { CornerOrnament, SectionHeading } from "@/components/ornament/Ornaments";
+import { CardCorners, SectionHeading } from "@/components/ornament/Ornaments";
 import { MotifImage } from "@/components/ornament/MotifImage";
 import { berita } from "@/data/site";
 
@@ -19,18 +19,18 @@ export function BeritaSection() {
           {berita.map((b) => (
             <article
               key={b.slug}
-              className="group relative flex flex-col overflow-hidden rounded-2xl border border-emas-soft bg-mori shadow-kartu transition duration-300 hover:-translate-y-1 md:max-lg:last:col-span-2 md:max-lg:last:grid md:max-lg:last:grid-cols-2"
+              className="group relative isolate flex flex-col overflow-hidden rounded-2xl border border-emas-soft bg-mori shadow-kartu transition duration-300 hover:-translate-y-1 md:max-lg:last:col-span-2 md:max-lg:last:grid md:max-lg:last:grid-cols-2"
             >
+              <CardCorners layer="depan" tl={{ tone: "terang" }} />
               <div className="relative md:max-lg:group-last:h-full">
                 <MotifImage alt={b.title} motif={b.motif} className="aspect-[16/8] md:max-lg:group-last:aspect-auto md:max-lg:group-last:h-full md:max-lg:group-last:min-h-56" />
                 <time
-                  className="absolute left-4 top-4 grid min-w-12 place-items-center rounded-lg bg-sogan-900 px-2 py-1.5 text-center text-mori shadow-md"
+                  className="absolute right-4 top-4 grid min-w-12 place-items-center rounded-lg bg-sogan-900 px-2 py-1.5 text-center text-mori shadow-md"
                   aria-label={`${b.day} ${b.month}`}
                 >
                   <span className="text-lg font-bold leading-none">{b.day}</span>
                   <span className="mt-0.5 text-[0.6rem] font-semibold uppercase tracking-wider text-kunyit-soft">{b.month}</span>
                 </time>
-                <CornerOrnament position="tr" className="text-mori/90" />
               </div>
               <div className="flex flex-1 flex-col px-5 pb-6 pt-5 sm:px-6">
                 <p className="font-serif text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-kunyit-600">{b.category}</p>

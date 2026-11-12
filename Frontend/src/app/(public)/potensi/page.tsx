@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CornerOrnament } from "@/components/ornament/Ornaments";
+import { CardCorners } from "@/components/ornament/Ornaments";
 import { MotifImage } from "@/components/ornament/MotifImage";
 import { CARD, DummyNotice, Section } from "@/components/shared/Blocks";
 import { PageHero } from "@/components/shared/PageHero";
@@ -38,12 +38,12 @@ export default function PotensiPage() {
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {k.items.map((it) => (
               <article key={it.nama} className={cn(CARD, "group flex flex-col hover:-translate-y-1")}>
+                <CardCorners layer="depan" tl={{ tone: "terang" }} />
                 <div className="relative">
                   <MotifImage src={it.image} alt={it.nama} motif={it.motif} className="aspect-[16/9] border-b-[3px] border-sogan-900" />
-                  <span className="absolute left-4 top-4 rounded-full bg-sogan-900/90 px-3 py-1 font-serif text-[0.7rem] font-semibold text-mori">
+                  <span className="absolute right-4 top-4 rounded-full bg-sogan-900/90 px-3 py-1 font-serif text-[0.7rem] font-semibold text-mori">
                     {it.tag}
                   </span>
-                  <CornerOrnament position="tr" className="text-mori/90" />
                 </div>
                 <div className="p-5 sm:p-6">
                   <h3 className="font-serif text-lg font-bold text-sogan-900 sm:text-xl">{it.nama}</h3>

@@ -1,0 +1,139 @@
+{
+  "type": "FeatureCollection",
+  "name": "Desa Lerep, Kecamatan Ungaran Barat, Kabupaten Semarang",
+  "keterangan": "Semua titik diambil dari Google Maps (Google Places) dan dicocokkan dengan data resmi desa/Kemendikdasmen/Pemkab. Tidak ada poligon batas desa karena data batas resmi belum tersedia. Diperbarui 10 November 2026.",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nama": "Desa Lerep",
+        "kategori": "wilayah",
+        "jenis": "Titik tengah wilayah desa (Google Maps)",
+        "kecamatan": "Ungaran Barat",
+        "kabupaten": "Semarang",
+        "provinsi": "Jawa Tengah",
+        "kode_wilayah": "33.22.18.2004",
+        "kode_pos": "50519",
+        "luas_ha": 682.32,
+        "ketinggian_mdpl": "310-940",
+        "jumlah_dusun": 8,
+        "daftar_dusun": "Indrokilo, Lerep, Soka, Tegalrejo, Lorog, Karangbolo, Kretek, Mapagan",
+        "jumlah_rw": 10,
+        "jumlah_rt": "65-72 (berbeda antar sumber; 68 menurut data 2024-2025)",
+        "batas_utara": "Kel. Bandarjo (Ungaran Barat) dan Kel. Sumur Rejo (Gunungpati, Kota Semarang)",
+        "batas_timur": "Desa Nyatnyono dan Kel. Ungaran",
+        "batas_selatan": "Perhutani (Hutan Lindung Lereng Gunung Ungaran) dan Desa Nyatnyono",
+        "batas_barat": "Desa Keji dan Desa Kalisidi",
+        "sumber": "Google Maps (administrative_area_level_4); data atribut: RPJM Desa Lerep, BPS",
+        "marker-color": "#6b7280",
+        "marker-symbol": "star"
+      },
+      "geometry": { "type": "Point", "coordinates": [110.3755648, -7.1377093] }
+    },
+
+    {
+      "type": "Feature",
+      "properties": { "nama": "Dusun Indrokilo", "kategori": "dusun", "jenis": "Titik penanda dusun", "penanda": "Kampung Sapi Indrokilo, RT 03 RW 01", "luas_ha": 119.42, "catatan": "Dusun tertinggi di Desa Lerep", "sumber": "Google Maps", "marker-color": "#2563eb" },
+      "geometry": { "type": "Point", "coordinates": [110.3723512, -7.1417359] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "nama": "Dusun Lerep", "kategori": "dusun", "jenis": "Titik penanda dusun", "penanda": "Desa Wisata Lerep, RT 02 RW 02", "luas_ha": 161.22, "sumber": "Google Maps", "marker-color": "#2563eb" },
+      "geometry": { "type": "Point", "coordinates": [110.3818058, -7.134968] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "nama": "Dusun Soka", "kategori": "dusun", "jenis": "Titik penanda dusun", "penanda": "Lapangan Desa Lerep (alamat Google: Dusun Soka)", "luas_ha": 108.56, "sumber": "Google Maps", "marker-color": "#2563eb" },
+      "geometry": { "type": "Point", "coordinates": [110.3918941, -7.1254463] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "nama": "Dusun Tegalrejo", "kategori": "dusun", "jenis": "Titik tengah dusun (wilayah administratif Google)", "luas_ha": 54.28, "sumber": "Google Maps (administrative_area_level_5)", "marker-color": "#2563eb" },
+      "geometry": { "type": "Point", "coordinates": [110.3956731, -7.1221482] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "nama": "Dusun Lorog", "kategori": "dusun", "jenis": "Titik penanda dusun", "penanda": "Dsn. Lorog, Jl. Ismaya Raya No. 75, RW 06", "luas_ha": 59.71, "sumber": "Google Maps", "marker-color": "#2563eb" },
+      "geometry": { "type": "Point", "coordinates": [110.3940204, -7.1183152] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "nama": "Dusun Karangbolo", "kategori": "dusun", "jenis": "Titik penanda dusun", "penanda": "Dusun Karangbolo (Google Maps)", "luas_ha": 32.57, "catatan": "Sentra oleh-oleh (keripik tempe, rempeyek)", "sumber": "Google Maps", "marker-color": "#2563eb" },
+      "geometry": { "type": "Point", "coordinates": [110.3993176, -7.1258703] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "nama": "Dusun Kretek", "kategori": "dusun", "jenis": "Titik penanda dusun", "penanda": "Gapura Selamat Datang Kretek Kampung Lele", "luas_ha": 65.14, "catatan": "Dusun terendah di Desa Lerep", "sumber": "Google Maps", "marker-color": "#2563eb" },
+      "geometry": { "type": "Point", "coordinates": [110.3999453, -7.1224897] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "nama": "Dusun Mapagan", "kategori": "dusun", "jenis": "Titik tengah dusun (wilayah administratif Google)", "luas_ha": 81.42, "sumber": "Google Maps (administrative_area_level_5)", "marker-color": "#2563eb" },
+      "geometry": { "type": "Point", "coordinates": [110.3986522, -7.1143753] }
+    },
+
+    {
+      "type": "Feature",
+      "properties": { "nama": "Balai Desa Lerep", "kategori": "pemerintahan", "alamat": "Jl. Kalimasada Raya No. 157, Lerep Satu", "plus_code": "V9FR+HPW", "sumber": "Google Maps", "marker-color": "#dc2626", "marker-symbol": "town-hall" },
+      "geometry": { "type": "Point", "coordinates": [110.3918214, -7.1260119] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "nama": "Kantor Kecamatan Ungaran Barat", "kategori": "pemerintahan", "plus_code": "V9CP+5HM", "catatan": "Lerep adalah ibu kota Kecamatan Ungaran Barat", "sumber": "Google Maps", "marker-color": "#dc2626", "marker-symbol": "town-hall" },
+      "geometry": { "type": "Point", "coordinates": [110.3864296, -7.129531] }
+    },
+
+    {
+      "type": "Feature",
+      "properties": { "nama": "Puskesmas Lerep", "kategori": "kesehatan", "alamat": "Jl. Yudistira Raya KM 3, Mapagan", "jenis": "Puskesmas Rawat Jalan, Puskesmas Pedesaan", "sumber": "Google Maps; Pemkab Semarang", "marker-color": "#16a34a", "marker-symbol": "hospital" },
+      "geometry": { "type": "Point", "coordinates": [110.3971639, -7.1146352] }
+    },
+
+    {
+      "type": "Feature",
+      "properties": { "nama": "SD Negeri Lerep 01", "kategori": "pendidikan", "alamat": "Jl. Srikandi Raya No. 2", "npsn": "20320201", "sumber": "Google Maps; Kemendikdasmen", "marker-color": "#d97706", "marker-symbol": "school" },
+      "geometry": { "type": "Point", "coordinates": [110.3888175, -7.1294864] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "nama": "SD Negeri Lerep 02", "kategori": "pendidikan", "alamat": "Jl. Kalimasada No. 08", "npsn": "20320200", "sumber": "Google Maps; Kemendikdasmen", "marker-color": "#d97706", "marker-symbol": "school" },
+      "geometry": { "type": "Point", "coordinates": [110.3915899, -7.1260867] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "nama": "SD Negeri Lerep 05", "kategori": "pendidikan", "alamat": "Jl. Ismaya Raya No. 19", "npsn": "20320198", "sumber": "Google Maps; Kemendikdasmen", "marker-color": "#d97706", "marker-symbol": "school" },
+      "geometry": { "type": "Point", "coordinates": [110.393326, -7.1227874] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "nama": "SD Negeri Lerep 06", "kategori": "pendidikan", "alamat": "Jl. Bima Raya, Mapagan", "npsn": "20320197", "sumber": "Google Maps; Kemendikdasmen", "marker-color": "#d97706", "marker-symbol": "school" },
+      "geometry": { "type": "Point", "coordinates": [110.3971296, -7.1155516] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "nama": "SMP Negeri 6 Ungaran (Satu Atap)", "kategori": "pendidikan", "alamat": "Desa Lerep RT 02 RW 02", "npsn": "20339207", "sumber": "Google Maps; Kemendikdasmen", "marker-color": "#d97706", "marker-symbol": "school" },
+      "geometry": { "type": "Point", "coordinates": [110.3812483, -7.1339492] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "nama": "SMP Alam Ungaran", "kategori": "pendidikan", "alamat": "Dusun Lorog, RT 02 RW 06", "status": "Swasta", "sumber": "Google Maps", "marker-color": "#d97706", "marker-symbol": "school" },
+      "geometry": { "type": "Point", "coordinates": [110.3895875, -7.1210522] }
+    },
+
+    {
+      "type": "Feature",
+      "properties": { "nama": "Lapangan Desa Lerep", "kategori": "fasilitas_umum", "catatan": "Di depan Balai Desa", "sumber": "Google Maps", "marker-color": "#7c3aed", "marker-symbol": "soccer" },
+      "geometry": { "type": "Point", "coordinates": [110.3918941, -7.1254463] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "nama": "Embung Lerep (Embung Sebligo)", "kategori": "fasilitas_umum", "catatan": "Embung untuk pengairan sentra durian; lokasi pasar kuliner Minggu Pon", "sumber": "Google Maps (Wisata Embung Lerep)", "marker-color": "#7c3aed", "marker-symbol": "water" },
+      "geometry": { "type": "Point", "coordinates": [110.3792753, -7.1392196] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "nama": "Desa Wisata Lerep", "kategori": "wisata", "alamat": "RT 02 RW 02, Dusun Lerep", "sumber": "Google Maps", "marker-color": "#0891b2", "marker-symbol": "park" },
+      "geometry": { "type": "Point", "coordinates": [110.3818058, -7.134968] }
+    }
+  ]
+}

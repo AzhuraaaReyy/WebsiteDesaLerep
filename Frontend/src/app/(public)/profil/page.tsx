@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Compass, MapPin, Target } from "lucide-react";
-import { CornerOrnament } from "@/components/ornament/Ornaments";
+import { CardCorners } from "@/components/ornament/Ornaments";
 import { CARD, DummyNotice, OrnateCard, Section, StatTile } from "@/components/shared/Blocks";
 import { PageHero } from "@/components/shared/PageHero";
 import { sejarah, visiMisi, wilayah } from "@/data/dummy";
@@ -22,13 +22,14 @@ export default function ProfilPage() {
           <OrnateCard>
             <p className="font-serif text-lg leading-relaxed text-sogan-900">{sejarah.ringkas}</p>
           </OrnateCard>
-          <ol className="relative space-y-6 border-l-2 border-emas pl-8">
+          <ol className="divide-y divide-emas-soft border-y border-emas-soft" aria-label="Linimasa sejarah Desa Lerep">
             {sejarah.linimasa.map((l) => (
-              <li key={l.tahun} className="relative">
-                <span className="absolute -left-[2.6rem] top-1 grid size-5 place-items-center rounded-full bg-kunyit ring-4 ring-mori" aria-hidden="true" />
-                <p className="font-serif text-xs font-semibold uppercase tracking-[0.2em] text-kunyit-600">{l.tahun}</p>
-                <h3 className="mt-1 font-serif text-lg font-bold text-sogan-900">{l.judul}</h3>
-                <p className="mt-1 text-sm leading-relaxed text-tinta/85">{l.isi}</p>
+              <li key={l.tahun} className="grid grid-cols-[6.75rem_minmax(0,1fr)] gap-x-4 py-5 sm:grid-cols-[7.5rem_minmax(0,1fr)] sm:gap-x-8">
+                <p className="font-serif text-base font-bold leading-snug text-kunyit-700 tabular-nums sm:text-lg">{l.tahun}</p>
+                <div>
+                  <h3 className="font-serif text-lg font-bold leading-snug text-sogan-900">{l.judul}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-tinta/85 sm:text-[0.95rem]">{l.isi}</p>
+                </div>
               </li>
             ))}
           </ol>
@@ -38,8 +39,7 @@ export default function ProfilPage() {
       <Section id="visi-misi" eyebrow={["Arah", "Pembangunan Desa"]} title="Visi & Misi">
         <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
           <div className={cn(CARD, "bg-sogan-900 p-7 text-mori")}>
-            <CornerOrnament position="tl" className="text-kunyit-soft" />
-            <CornerOrnament position="br" className="text-kunyit-soft" />
+            <CardCorners tone="terang" />
             <Target className="size-8 text-kunyit" />
             <h3 className="mt-4 font-serif text-2xl font-bold">Visi</h3>
             <p className="mt-3 font-serif text-lg leading-relaxed text-mori/90">“{visiMisi.visi}”</p>

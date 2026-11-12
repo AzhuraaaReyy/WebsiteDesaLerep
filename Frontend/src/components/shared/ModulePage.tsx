@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { Clock } from "lucide-react";
-import { CornerOrnament } from "@/components/ornament/Ornaments";
+import { CardCorners } from "@/components/ornament/Ornaments";
 import { PageHero } from "@/components/shared/PageHero";
 import { modulePages } from "@/data/site";
 import { CONTENT_CONTAINER } from "@/lib/layout";
@@ -24,10 +24,10 @@ export function ModulePage({ slug }: { slug: keyof typeof modulePages }) {
               key={s.id}
               id={s.id}
               aria-labelledby={`judul-${s.id}`}
-              className="relative scroll-mt-28 overflow-hidden rounded-2xl border border-emas-soft bg-mori shadow-kartu"
+              className="relative isolate scroll-mt-28 overflow-hidden rounded-2xl border border-emas-soft bg-mori shadow-kartu"
             >
               <div className="pita-batik h-2" aria-hidden="true" />
-              <CornerOrnament position="br" />
+              <CardCorners tl={{ className: "top-2" }} />
               <div className="px-6 pb-8 pt-6 sm:px-7">
                 <h2 id={`judul-${s.id}`} className="font-serif text-xl font-bold text-sogan-900">
                   {s.title}

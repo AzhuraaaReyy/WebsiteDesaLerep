@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Clock, Mail, MapPin, MessageCircle, Navigation, Phone } from "lucide-react";
-import { CornerOrnament } from "@/components/ornament/Ornaments";
+import { CardCorners } from "@/components/ornament/Ornaments";
 import { PageHero } from "@/components/shared/PageHero";
 import { siteConfig } from "@/data/site";
 import { CONTENT_CONTAINER } from "@/lib/layout";
@@ -28,8 +28,8 @@ export default function KontakPage() {
         description="Kanal resmi Pemerintah Desa Lerep untuk informasi, pelayanan, pengaduan, dan aspirasi masyarakat."
       />
       <div className={cn(CONTENT_CONTAINER, "grid gap-6 py-14 sm:py-20 lg:grid-cols-[1.2fr_0.8fr]")}>
-        <section aria-labelledby="judul-kontak" className="relative rounded-2xl border border-emas-soft bg-mori p-6 shadow-kartu sm:p-8">
-          <CornerOrnament position="tr" />
+        <section aria-labelledby="judul-kontak" className="relative isolate overflow-hidden rounded-2xl border border-emas-soft bg-mori p-6 shadow-kartu sm:p-8">
+          <CardCorners />
           <h2 id="judul-kontak" className="font-serif text-2xl font-bold text-sogan-900">
             Sekretariat Desa
           </h2>

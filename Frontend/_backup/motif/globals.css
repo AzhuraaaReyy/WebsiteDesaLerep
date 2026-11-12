@@ -1,0 +1,470 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   Token desain Desa Wisata Lerep
+   Palet diambil dari logo DWL & motif batik sogan: cokelat sogan, oranye
+   kunyit, krem kain mori, emas, dan tosca daun.
+   ========================================================================== */
+@theme {
+  --color-mori: #fdf8ee;
+  --color-mori-2: #f8eedc;
+  --color-mori-3: #f1e1c4;
+  --color-sogan: #5a3416;
+  --color-sogan-700: #4a2a10;
+  --color-sogan-900: #36200d;
+  --color-sogan-soft: #7a5233;
+  --color-kunyit: #f28a2e;
+  --color-kunyit-600: #e0761b;
+  /* Untuk teks kecil di atas latar mori — kontras ≥ 4,5:1 (kunyit-600 hanya ±2,9:1) */
+  --color-kunyit-700: #a8520c;
+  --color-kunyit-soft: #fcd9b0;
+  --color-ornamen: #562f00;
+  /* Palet banner halaman dalam */
+  --color-jingga-muda: #ffce99;
+  --color-jingga: #ff9644;
+  /* Status formulir */
+  --color-galat: #b42318;
+  --color-tosca-tua: #0d6b5f;
+  --color-emas: #d6a25c;
+  --color-emas-soft: #ecd3a8;
+  --color-tosca: #2aa594;
+  --color-tinta: #4b3a2c;
+
+  /* Warna data grafik — divalidasi CVD & kontras terhadap latar mori */
+  --color-grafik-1: #14907f;
+  --color-grafik-2: #d9731a;
+
+  --font-serif: var(--font-lora), "Georgia", serif;
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-kartu: 0 1px 0 rgb(90 52 22 / 0.04), 0 10px 30px -14px rgb(90 52 22 / 0.28);
+  --shadow-tombol: 0 8px 20px -8px rgb(224 118 27 / 0.6);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+body {
+  @apply bg-mori font-sans text-tinta antialiased;
+}
+
+::selection {
+  background: var(--color-kunyit-soft);
+  color: var(--color-sogan-900);
+}
+
+/* Pita motif batik (border horizontal) — dipakai di header, footer, kartu. */
+.pita-batik {
+  background-image: url("../../public/images/border-batik-h.jpg");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: center;
+}
+
+.ornamen-pembatas {
+  mask: url("../../public/images/ornamen-pembatas.png") center / contain no-repeat;
+  -webkit-mask: url("../../public/images/ornamen-pembatas.png") center / contain no-repeat;
+  background-color: currentColor;
+}
+
+.ornamen-garis {
+  mask: url("../../public/images/ornamen-garis.png") center / contain no-repeat;
+  -webkit-mask: url("../../public/images/ornamen-garis.png") center / contain no-repeat;
+  background-color: currentColor;
+}
+
+.ornamen-sudut {
+  mask: url("../../public/images/ornamen-sudut.png") center / contain no-repeat;
+  -webkit-mask: url("../../public/images/ornamen-sudut.png") center / contain no-repeat;
+  background-color: currentColor;
+}
+
+.pita-kembang {
+  background-image: url("../../public/images/border-floral-h.jpg");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: center;
+}
+
+/* Tekstur titik halus untuk latar krem */
+.tekstur-mori {
+  background-image: radial-gradient(rgb(90 52 22 / 0.05) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* Isi indikator slide hero */
+/* Pita tumpal: deret segitiga runcing ke atas, khas tepi kain tradisional. */
+.pita-tumpal {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='14' viewBox='0 0 22 14'%3E%3Cpath d='M0 14 11 0 22 14z' fill='%23562f00'/%3E%3Cpath d='M7 14 11 8 15 14z' fill='%23ff9644'/%3E%3C/svg%3E")
+    left bottom / 22px 100% repeat-x;
+}
+
+/* Gerak halus elemen banner (transform saja; dimatikan oleh prefers-reduced-motion). */
+@keyframes melayang {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-6deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(-3deg);
+  }
+}
+
+@keyframes berayun {
+  0%,
+  100% {
+    transform: rotate(-1.2deg);
+  }
+  50% {
+    transform: rotate(1.2deg);
+  }
+}
+
+/* Animasi formulir pengaduan & aspirasi */
+@keyframes guncang {
+  0%,
+  100% {
+    translate: 0;
+  }
+  20% {
+    translate: -8px;
+  }
+  40% {
+    translate: 7px;
+  }
+  60% {
+    translate: -5px;
+  }
+  80% {
+    translate: 3px;
+  }
+}
+
+@keyframes ayun {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  25% {
+    rotate: -10deg;
+  }
+  75% {
+    rotate: 10deg;
+  }
+}
+
+@keyframes riak {
+  from {
+    scale: 1;
+    opacity: 0.9;
+  }
+  to {
+    scale: 1.9;
+    opacity: 0;
+  }
+}
+
+@keyframes gambar-centang {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes hero-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ===== Peta interaktif Desa Lerep (Leaflet) ===== */
+.leaflet-container {
+  font-family: var(--font-poppins), system-ui, sans-serif;
+}
+.peta-pin {
+  position: relative;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 3px solid #fff;
+  border-radius: 50% 50% 50% 0;
+  background: var(--w);
+  color: #fff;
+  box-shadow: 0 6px 14px -4px rgb(0 0 0 / 0.55);
+  rotate: -45deg;
+  transition: scale 0.2s ease, box-shadow 0.2s ease;
+  transform-origin: 50% 100%;
+}
+.peta-pin__isi {
+  display: grid;
+  rotate: 45deg;
+}
+.peta-pin__isi svg {
+  width: 17px;
+  height: 17px;
+}
+.leaflet-marker-icon:hover .peta-pin,
+.peta-pin--aktif {
+  scale: 1.18;
+}
+.peta-pin--aktif::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  border: 3px solid var(--w);
+  border-radius: inherit;
+  animation: peta-denyut 1.6s ease-out infinite;
+}
+@keyframes peta-denyut {
+  from { opacity: 0.9; scale: 0.85; }
+  to { opacity: 0; scale: 1.45; }
+}
+
+.peta-dusun {
+  position: relative;
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+.peta-dusun__titik {
+  position: absolute;
+  inset: 0;
+  border: 3px solid #fff;
+  border-radius: 999px;
+  background: var(--w);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--w) 35%, transparent), 0 3px 8px rgb(0 0 0 / 0.5);
+}
+.peta-dusun__label {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  display: inline-flex;
+  translate: -50% 0;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--w) 92%, #000);
+  padding: 3px 10px 3px 7px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff;
+  box-shadow: 0 6px 14px -6px rgb(0 0 0 / 0.7);
+  transition: scale 0.2s ease;
+  transform-origin: 50% 100%;
+}
+.peta-dusun__label svg {
+  width: 13px;
+  height: 13px;
+}
+.leaflet-marker-icon:hover .peta-dusun__label,
+.peta-dusun--aktif .peta-dusun__label {
+  scale: 1.12;
+}
+.peta-dusun--aktif .peta-dusun__titik {
+  animation: peta-denyut-titik 1.6s ease-out infinite;
+}
+@keyframes peta-denyut-titik {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--w) 70%, transparent); }
+  100% { box-shadow: 0 0 0 16px transparent; }
+}
+
+.peta-desa {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 3px solid #fff;
+  border-radius: 999px;
+  background: #562f00;
+  color: #ffce99;
+  box-shadow: 0 0 0 5px rgb(255 150 68 / 0.45), 0 4px 10px rgb(0 0 0 / 0.5);
+}
+.peta-desa svg {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+}
+
+.peta-popup .leaflet-popup-content-wrapper {
+  border: 2px solid #562f00;
+  border-radius: 1.1rem;
+  background: #fdf8ee;
+  box-shadow: 0 18px 40px -16px rgb(86 47 0 / 0.8);
+}
+.peta-popup .leaflet-popup-content {
+  margin: 14px 16px;
+  font-family: inherit;
+}
+.peta-popup .leaflet-popup-tip {
+  border: 2px solid #562f00;
+  background: #fdf8ee;
+}
+.peta-popup a.leaflet-popup-close-button {
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  color: #562f00;
+  font-size: 20px;
+  line-height: 26px;
+}
+.peta-popup a.leaflet-popup-close-button:hover {
+  background: #ffce99;
+}
+.peta-tooltip.leaflet-tooltip {
+  border: 0;
+  border-radius: 999px;
+  background: #562f00;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fdf8ee;
+  box-shadow: 0 6px 14px -6px rgb(0 0 0 / 0.7);
+}
+.peta-tooltip.leaflet-tooltip-top::before {
+  border-top-color: #562f00;
+}
+.leaflet-control-scale-line {
+  border-color: #562f00;
+  background: rgb(253 248 238 / 0.9);
+  color: #562f00;
+  font-weight: 600;
+}
+.leaflet-control-attribution {
+  font-size: 10px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .peta-pin--aktif::after,
+  .peta-dusun--aktif .peta-dusun__titik {
+    animation: none;
+  }
+}
+
+/* ===== Peta Desa Lerep — fokus batas & animasi pembuka ===== */
+/* Sebelum animasi dimulai, semua lapisan desa disembunyikan. */
+.leaflet-container:not(.peta-mulai) :is(.peta-pin, .peta-dusun, .peta-desa, .peta-garis-desa, .peta-area, .peta-topeng, .peta-tetangga-garis),
+.leaflet-container:not(.peta-mulai) .peta-tetangga {
+  opacity: 0;
+}
+.peta-mulai .peta-topeng {
+  animation: peta-pudar 1.4s ease-out calc(var(--t0, 0s) * 0.3) backwards;
+}
+.peta-mulai .peta-tetangga-garis,
+.peta-mulai .peta-tetangga {
+  animation: peta-pudar 1s ease-out calc(var(--t0, 0s) * 1.4) backwards;
+}
+.peta-mulai .peta-garis-desa {
+  animation: peta-gambar 2.6s cubic-bezier(0.65, 0, 0.35, 1) calc(var(--t0, 0s) * 0.9) backwards;
+}
+.peta-mulai .peta-area {
+  animation: peta-pudar 0.7s ease-out calc(var(--t0, 0s) * 2 + var(--n, 0) * 110ms) backwards;
+}
+.peta-mulai .peta-pin {
+  animation: peta-jatuh 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--t0, 0s) * 3.2 + var(--i, 0) * 55ms) backwards;
+}
+.peta-mulai .peta-dusun__label {
+  animation: peta-muncul 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--t0, 0s) * 2.6 + var(--i, 0) * 90ms) backwards;
+}
+.peta-mulai .peta-dusun__titik,
+.peta-mulai .peta-desa {
+  animation: peta-pudar 0.5s ease-out calc(var(--t0, 0s) * 2.6) backwards;
+}
+.peta-urut-0 { --n: 0; }
+.peta-urut-1 { --n: 1; }
+.peta-urut-2 { --n: 2; }
+.peta-urut-3 { --n: 3; }
+.peta-urut-4 { --n: 4; }
+.peta-urut-5 { --n: 5; }
+.peta-urut-6 { --n: 6; }
+.peta-urut-7 { --n: 7; }
+@keyframes peta-pudar {
+  from { opacity: 0; }
+}
+@keyframes peta-gambar {
+  from { stroke-dasharray: 14000; stroke-dashoffset: 14000; }
+  to { stroke-dasharray: 14000; stroke-dashoffset: 0; }
+}
+@keyframes peta-jatuh {
+  from { opacity: 0; translate: 0 -46px; }
+}
+@keyframes peta-muncul {
+  from { opacity: 0; scale: 0.3; }
+}
+.peta-area {
+  cursor: pointer;
+  transition: fill-opacity 0.25s ease, stroke-width 0.25s ease;
+}
+.peta-garis-desa--bayang {
+  filter: drop-shadow(0 0 6px rgb(255 150 68 / 0.55));
+}
+.peta-desa {
+  position: relative;
+}
+.peta-desa::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 999px;
+  border: 2px solid #ffce99;
+  animation: peta-denyut 2.2s ease-out infinite;
+}
+.peta-tetangga.leaflet-tooltip {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  font-family: var(--font-lora), Georgia, serif;
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.peta-tetangga.leaflet-tooltip::before {
+  display: none;
+}
+.peta-tetangga--terang {
+  color: #ffce99;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.9);
+}
+.peta-tetangga--gelap {
+  color: #562f00;
+  text-shadow: 0 1px 0 #fdf8ee, 0 0 6px #fdf8ee;
+}
+@media (prefers-reduced-motion: reduce) {
+  .peta-mulai :is(.peta-topeng, .peta-tetangga-garis, .peta-tetangga, .peta-garis-desa, .peta-area, .peta-pin, .peta-dusun__label, .peta-dusun__titik, .peta-desa),
+  .peta-desa::after {
+    animation: none;
+  }
+}

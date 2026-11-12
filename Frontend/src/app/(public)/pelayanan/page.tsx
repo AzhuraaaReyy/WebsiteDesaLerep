@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import { CheckCircle2, Clock, Lightbulb, Megaphone, Wallet } from "lucide-react";
+import { CheckCircle2, Clock, Wallet } from "lucide-react";
 import { CARD, DummyNotice, OrnateCard, Section, StepNumber } from "@/components/shared/Blocks";
 import { PageHero } from "@/components/shared/PageHero";
 import { alurPengajuan, layanan } from "@/data/dummy";
-import { modulePages, siteConfig } from "@/data/site";
+import { modulePages } from "@/data/site";
+import { ParticipationHub } from "@/features/participation/ParticipationHub";
+import { GisaLayanan } from "@/features/services/GisaLayanan";
 import { TrackingForm } from "@/features/services/TrackingForm";
 import { cn } from "@/lib/utils";
 
@@ -53,8 +55,16 @@ export default function PelayananPage() {
         </div>
       </Section>
 
-      <Section id="ajukan" eyebrow={["Pengajuan", "Online"]} title="Alur Pengajuan Layanan">
-        <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <Section
+        id="ajukan"
+        eyebrow={["Pengajuan", "Layanan"]}
+        title="Ajukan Layanan Administrasi"
+        subtitle="Lihat persyaratan resmi setiap layanan, siapkan berkas, lalu hubungi admin GisaLerep untuk mengurusnya sendiri tanpa perantara."
+      >
+        <GisaLayanan />
+
+        <h3 className="mt-14 text-center font-serif text-2xl font-bold text-sogan-900">Alur Pengajuan Layanan</h3>
+        <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {alurPengajuan.map((a, i) => (
             <li key={a.judul} className={cn(CARD, "p-5")}>
               <StepNumber n={i + 1} />
@@ -64,11 +74,12 @@ export default function PelayananPage() {
           ))}
         </ol>
         <p className="mt-6 text-center text-sm text-tinta/80">
-          Formulir pengajuan online akan dibuka setelah layanan dikonfirmasi pemerintah desa.
+          Formulir pengajuan online dengan unggah berkas akan dibuka setelah layanan dikonfirmasi pemerintah desa. Sementara itu,
+          gunakan persyaratan dan kanal WhatsApp GisaLerep di atas.
         </p>
       </Section>
 
-      <Section id="lacak" eyebrow={["Status", "Permohonan"]} title="Lacak Pengajuan" subtitle="Masukkan nomor tiket dan kode verifikasi yang Anda terima saat pengajuan." tone="tekstur">
+      <Section id="lacak" eyebrow={["Status", "Permohonan"]} title="Lacak Pengajuan" subtitle="Lacak permohonan, pengaduan, atau aspirasi dengan nomor tiket dan kode verifikasi yang Anda terima." tone="tekstur">
         <div className="mx-auto max-w-2xl">
           <OrnateCard>
             <TrackingForm />
@@ -76,41 +87,13 @@ export default function PelayananPage() {
         </div>
       </Section>
 
-      <Section id="pengaduan" eyebrow={["Partisipasi", "Masyarakat"]} title="Pengaduan & Aspirasi">
-        <div className="grid gap-6 md:grid-cols-2">
-          <div id="pengaduan-card" className={cn(CARD, "bg-sogan-900 p-7 text-mori")}>
-            <Megaphone className="size-8 text-kunyit" />
-            <h3 className="mt-4 font-serif text-2xl font-bold">Pengaduan</h3>
-            <p className="mt-2 text-sm leading-relaxed text-mori/85">
-              Laporkan permasalahan pelayanan atau lingkungan. Pengaduan wajib mencantumkan identitas & kontak, dan hanya dapat
-              dilihat oleh pelapor serta petugas berwenang.
-            </p>
-            <a
-              href={siteConfig.whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-flex rounded-full bg-kunyit px-5 py-2.5 text-xs font-bold uppercase tracking-[0.12em] text-white shadow-tombol hover:bg-kunyit-600"
-            >
-              Sampaikan Pengaduan
-            </a>
-          </div>
-          <div id="aspirasi" className={cn(CARD, "scroll-mt-28 p-7")}>
-            <div className="pita-batik absolute inset-x-0 top-0 h-2" aria-hidden="true" />
-            <Lightbulb className="size-8 text-kunyit-600" />
-            <h3 className="mt-4 font-serif text-2xl font-bold text-sogan-900">Aspirasi</h3>
-            <p className="mt-2 text-sm leading-relaxed text-tinta/85">
-              Punya usulan atau gagasan untuk kemajuan desa? Sampaikan aspirasi Anda dan pantau tanggapannya melalui nomor tiket.
-            </p>
-            <a
-              href={siteConfig.whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-flex rounded-full border-2 border-sogan-900/70 bg-kunyit-soft px-5 py-2.5 text-xs font-bold uppercase tracking-[0.12em] text-sogan-900 hover:bg-kunyit hover:text-white"
-            >
-              Kirim Aspirasi
-            </a>
-          </div>
-        </div>
+      <Section
+        id="pengaduan"
+        eyebrow={["Partisipasi", "Masyarakat"]}
+        title="Pengaduan & Aspirasi"
+        subtitle="Pilih jenis laporan yang ingin Anda sampaikan. Baca SOP terlebih dahulu, lalu isi formulir secara bertahap."
+      >
+        <ParticipationHub />
       </Section>
     </>
   );

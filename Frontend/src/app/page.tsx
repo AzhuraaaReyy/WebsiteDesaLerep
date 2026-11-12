@@ -1,5 +1,6 @@
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { TombolWhatsApp } from "@/components/layout/TombolWhatsApp";
 import { HeroSection } from "@/components/home/HeroSection";
 import { InfoDesaSection } from "@/components/home/InfoDesaSection";
 import { DayaTarikSection } from "@/components/home/DayaTarikSection";
@@ -26,6 +27,7 @@ export default function HomePage() {
         <StrukturSection />
       </main>
       <SiteFooter />
+      <TombolWhatsApp />
     </>
   );
 }

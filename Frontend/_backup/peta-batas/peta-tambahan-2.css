@@ -1,0 +1,98 @@
+
+/* ===== Peta Desa Lerep — fokus batas & animasi pembuka ===== */
+/* Sebelum animasi dimulai, semua lapisan desa disembunyikan. */
+.leaflet-container:not(.peta-mulai) :is(.peta-pin, .peta-dusun, .peta-desa, .peta-garis-desa, .peta-area, .peta-topeng, .peta-tetangga-garis),
+.leaflet-container:not(.peta-mulai) .peta-tetangga {
+  opacity: 0;
+}
+.peta-mulai .peta-topeng {
+  animation: peta-pudar 1.4s ease-out calc(var(--t0, 0s) * 0.3) backwards;
+}
+.peta-mulai .peta-tetangga-garis,
+.peta-mulai .peta-tetangga {
+  animation: peta-pudar 1s ease-out calc(var(--t0, 0s) * 1.4) backwards;
+}
+.peta-mulai .peta-garis-desa {
+  animation: peta-gambar 2.6s cubic-bezier(0.65, 0, 0.35, 1) calc(var(--t0, 0s) * 0.9) backwards;
+}
+.peta-mulai .peta-area {
+  animation: peta-pudar 0.7s ease-out calc(var(--t0, 0s) * 2 + var(--n, 0) * 110ms) backwards;
+}
+.peta-mulai .peta-pin {
+  animation: peta-jatuh 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--t0, 0s) * 3.2 + var(--i, 0) * 55ms) backwards;
+}
+.peta-mulai .peta-dusun__label {
+  animation: peta-muncul 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--t0, 0s) * 2.6 + var(--i, 0) * 90ms) backwards;
+}
+.peta-mulai .peta-dusun__titik,
+.peta-mulai .peta-desa {
+  animation: peta-pudar 0.5s ease-out calc(var(--t0, 0s) * 2.6) backwards;
+}
+.peta-urut-0 { --n: 0; }
+.peta-urut-1 { --n: 1; }
+.peta-urut-2 { --n: 2; }
+.peta-urut-3 { --n: 3; }
+.peta-urut-4 { --n: 4; }
+.peta-urut-5 { --n: 5; }
+.peta-urut-6 { --n: 6; }
+.peta-urut-7 { --n: 7; }
+@keyframes peta-pudar {
+  from { opacity: 0; }
+}
+@keyframes peta-gambar {
+  from { stroke-dasharray: 14000; stroke-dashoffset: 14000; }
+  to { stroke-dasharray: 14000; stroke-dashoffset: 0; }
+}
+@keyframes peta-jatuh {
+  from { opacity: 0; translate: 0 -46px; }
+}
+@keyframes peta-muncul {
+  from { opacity: 0; scale: 0.3; }
+}
+.peta-area {
+  cursor: pointer;
+  transition: fill-opacity 0.25s ease, stroke-width 0.25s ease;
+}
+.peta-garis-desa--bayang {
+  filter: drop-shadow(0 0 6px rgb(255 150 68 / 0.55));
+}
+.peta-desa {
+  position: relative;
+}
+.peta-desa::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 999px;
+  border: 2px solid #ffce99;
+  animation: peta-denyut 2.2s ease-out infinite;
+}
+.peta-tetangga.leaflet-tooltip {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  font-family: var(--font-lora), Georgia, serif;
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.peta-tetangga.leaflet-tooltip::before {
+  display: none;
+}
+.peta-tetangga--terang {
+  color: #ffce99;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.9);
+}
+.peta-tetangga--gelap {
+  color: #562f00;
+  text-shadow: 0 1px 0 #fdf8ee, 0 0 6px #fdf8ee;
+}
+@media (prefers-reduced-motion: reduce) {
+  .peta-mulai :is(.peta-topeng, .peta-tetangga-garis, .peta-tetangga, .peta-garis-desa, .peta-area, .peta-pin, .peta-dusun__label, .peta-dusun__titik, .peta-desa),
+  .peta-desa::after {
+    animation: none;
+  }
+}

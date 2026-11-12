@@ -1,0 +1,204 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   Token desain Desa Wisata Lerep
+   Palet diambil dari logo DWL & motif batik sogan: cokelat sogan, oranye
+   kunyit, krem kain mori, emas, dan tosca daun.
+   ========================================================================== */
+@theme {
+  --color-mori: #fdf8ee;
+  --color-mori-2: #f8eedc;
+  --color-mori-3: #f1e1c4;
+  --color-sogan: #5a3416;
+  --color-sogan-700: #4a2a10;
+  --color-sogan-900: #36200d;
+  --color-sogan-soft: #7a5233;
+  --color-kunyit: #f28a2e;
+  --color-kunyit-600: #e0761b;
+  /* Untuk teks kecil di atas latar mori — kontras ≥ 4,5:1 (kunyit-600 hanya ±2,9:1) */
+  --color-kunyit-700: #a8520c;
+  --color-kunyit-soft: #fcd9b0;
+  --color-ornamen: #562f00;
+  /* Palet banner halaman dalam */
+  --color-jingga-muda: #ffce99;
+  --color-jingga: #ff9644;
+  /* Status formulir */
+  --color-galat: #b42318;
+  --color-tosca-tua: #0d6b5f;
+  --color-emas: #d6a25c;
+  --color-emas-soft: #ecd3a8;
+  --color-tosca: #2aa594;
+  --color-tinta: #4b3a2c;
+
+  /* Warna data grafik — divalidasi CVD & kontras terhadap latar mori */
+  --color-grafik-1: #14907f;
+  --color-grafik-2: #d9731a;
+
+  --font-serif: var(--font-lora), "Georgia", serif;
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-kartu: 0 1px 0 rgb(90 52 22 / 0.04), 0 10px 30px -14px rgb(90 52 22 / 0.28);
+  --shadow-tombol: 0 8px 20px -8px rgb(224 118 27 / 0.6);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+body {
+  @apply bg-mori font-sans text-tinta antialiased;
+}
+
+::selection {
+  background: var(--color-kunyit-soft);
+  color: var(--color-sogan-900);
+}
+
+/* Pita motif batik (border horizontal) — dipakai di header, footer, kartu. */
+.pita-batik {
+  background-image: url("../../public/images/border-batik-h.jpg");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: center;
+}
+
+.ornamen-pembatas {
+  mask: url("../../public/images/ornamen-pembatas.png") center / contain no-repeat;
+  -webkit-mask: url("../../public/images/ornamen-pembatas.png") center / contain no-repeat;
+  background-color: currentColor;
+}
+
+.ornamen-garis {
+  mask: url("../../public/images/ornamen-garis.png") center / contain no-repeat;
+  -webkit-mask: url("../../public/images/ornamen-garis.png") center / contain no-repeat;
+  background-color: currentColor;
+}
+
+.ornamen-sudut {
+  mask: url("../../public/images/ornamen-sudut.png") center / contain no-repeat;
+  -webkit-mask: url("../../public/images/ornamen-sudut.png") center / contain no-repeat;
+  background-color: currentColor;
+}
+
+.pita-kembang {
+  background-image: url("../../public/images/border-floral-h.jpg");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: center;
+}
+
+/* Tekstur titik halus untuk latar krem */
+.tekstur-mori {
+  background-image: radial-gradient(rgb(90 52 22 / 0.05) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* Isi indikator slide hero */
+/* Pita tumpal: deret segitiga runcing ke atas, khas tepi kain tradisional. */
+.pita-tumpal {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='14' viewBox='0 0 22 14'%3E%3Cpath d='M0 14 11 0 22 14z' fill='%23562f00'/%3E%3Cpath d='M7 14 11 8 15 14z' fill='%23ff9644'/%3E%3C/svg%3E")
+    left bottom / 22px 100% repeat-x;
+}
+
+/* Gerak halus elemen banner (transform saja; dimatikan oleh prefers-reduced-motion). */
+@keyframes melayang {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-6deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(-3deg);
+  }
+}
+
+@keyframes berayun {
+  0%,
+  100% {
+    transform: rotate(-1.2deg);
+  }
+  50% {
+    transform: rotate(1.2deg);
+  }
+}
+
+/* Animasi formulir pengaduan & aspirasi */
+@keyframes guncang {
+  0%,
+  100% {
+    translate: 0;
+  }
+  20% {
+    translate: -8px;
+  }
+  40% {
+    translate: 7px;
+  }
+  60% {
+    translate: -5px;
+  }
+  80% {
+    translate: 3px;
+  }
+}
+
+@keyframes ayun {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  25% {
+    rotate: -10deg;
+  }
+  75% {
+    rotate: 10deg;
+  }
+}
+
+@keyframes riak {
+  from {
+    scale: 1;
+    opacity: 0.9;
+  }
+  to {
+    scale: 1.9;
+    opacity: 0;
+  }
+}
+
+@keyframes gambar-centang {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes hero-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

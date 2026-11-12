@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
 import { Info } from "lucide-react";
-import { CornerOrnament, SectionHeading } from "@/components/ornament/Ornaments";
+import { CardCorners, SectionHeading } from "@/components/ornament/Ornaments";
 import { CONTENT_CONTAINER } from "@/lib/layout";
 import { cn } from "@/lib/utils";
 
 /** Kelas kartu standar — sama dengan kartu di beranda. */
 export const CARD =
-  "relative overflow-hidden rounded-2xl border border-emas-soft bg-mori shadow-kartu transition duration-300";
+  "relative isolate overflow-hidden rounded-2xl border border-emas-soft bg-mori shadow-kartu transition duration-300";
 
 export function formatRupiah(n: number, compact = false) {
   if (compact) {
@@ -82,7 +82,7 @@ export function OrnateCard({ children, className }: { children: ReactNode; class
   return (
     <div className={cn(CARD, className)}>
       <div className="pita-batik h-2" aria-hidden="true" />
-      <CornerOrnament position="br" />
+      <CardCorners tl={{ className: "top-2" }} />
       <div className="px-6 pb-7 pt-6">{children}</div>
     </div>
   );

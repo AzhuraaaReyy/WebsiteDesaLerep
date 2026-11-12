@@ -87,7 +87,7 @@ function Sidebar({ pathname, onNavigate }: { pathname: string; onNavigate?: () =
       <nav aria-label="Menu admin" className="relative flex-1 overflow-y-auto px-3 py-4 [scrollbar-width:thin]">
         {adminNav.map((g) => (
           <div key={g.group} className="mb-4">
-            <p className="px-3 pb-1.5 font-serif text-[0.62rem] font-semibold uppercase tracking-[0.25em] text-kunyit-soft/80">{g.group}</p>
+            <p className="px-3 pb-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-kunyit-soft/80">{g.group}</p>
             <ul className="space-y-0.5">
               {g.items.map((it) => {
                 const Icon = icons[it.icon] ?? LayoutDashboard;

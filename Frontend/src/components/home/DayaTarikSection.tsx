@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CornerOrnament, SectionHeading } from "@/components/ornament/Ornaments";
+import { CardCorners, SectionHeading } from "@/components/ornament/Ornaments";
 import { MotifImage } from "@/components/ornament/MotifImage";
 import { destinasi } from "@/data/site";
 
@@ -37,14 +37,14 @@ export function DayaTarikSection() {
           {destinasi.map((d) => (
             <article
               key={d.slug}
-              className="group relative flex flex-col overflow-hidden rounded-2xl border border-emas-soft bg-mori shadow-kartu transition duration-300 hover:-translate-y-1 md:max-lg:last:col-span-2 md:max-lg:last:grid md:max-lg:last:grid-cols-2"
+              className="group relative isolate flex flex-col overflow-hidden rounded-2xl border border-emas-soft bg-mori shadow-kartu transition duration-300 hover:-translate-y-1 md:max-lg:last:col-span-2 md:max-lg:last:grid md:max-lg:last:grid-cols-2"
             >
+              <CardCorners layer="depan" tl={{ tone: "terang" }} />
               <div className="relative md:max-lg:group-last:h-full">
                 <MotifImage src={d.image} alt={d.title} motif={d.motif} className="aspect-[16/9] border-b-[3px] border-sogan-900 md:max-lg:group-last:aspect-auto md:max-lg:group-last:h-full md:max-lg:group-last:min-h-64 md:max-lg:group-last:border-b-0 md:max-lg:group-last:border-r-[3px]" />
-                <span className="absolute left-4 top-4 rounded-full bg-sogan-900/90 px-3 py-1 font-serif text-[0.7rem] font-semibold text-mori">
+                <span className="absolute right-4 top-4 rounded-full bg-sogan-900/90 px-3 py-1 font-serif text-[0.7rem] font-semibold text-mori">
                   {d.category}
                 </span>
-                <CornerOrnament position="tr" className="text-mori/90" />
               </div>
 
               <div className="flex flex-1 flex-col px-5 pb-6 pt-5 sm:px-6">

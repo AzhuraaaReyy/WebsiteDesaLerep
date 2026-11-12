@@ -1,0 +1,11 @@
+
+/* Motif sulur tipis di latar krem: warna dipanggang dari mori ke ornamen (±7%),
+   ubin dicerminkan 2×2 agar tersambung mulus. Kartu & seksi berlatar sendiri tetap polos. */
+body {
+  background-image: url("../../public/images/motif-sulur.webp");
+  background-size: 620px auto;
+  background-repeat: repeat;
+}
+.tekstur-mori {
+  background-image: none;
+}

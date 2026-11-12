@@ -2,7 +2,7 @@ import { asset } from "@/lib/asset";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { Eyebrow, OrnamentDivider } from "@/components/ornament/Ornaments";
+import { OrnamenPembatas } from "@/components/ornament/Ornaments";
 import { TextHighlighter } from "@/components/ui/text-highlighter";
 import { HERO_CONTAINER } from "@/lib/layout";
 import { cn } from "@/lib/utils";
@@ -38,7 +38,10 @@ export function HeroSection() {
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-mori via-mori/95 to-mori/75 lg:via-mori/80 lg:via-40% lg:to-mori/0" />
       <div
         className="absolute inset-y-0 left-0 -z-10 w-full opacity-[0.07] [mask-image:linear-gradient(to_right,black_45%,transparent)] lg:w-3/5"
-        style={{ backgroundImage: `url(${asset("/images/batik.jpg")})`, backgroundSize: "420px" }}
+        style={{
+          backgroundImage: `url(${asset("/images/batik.jpg")})`,
+          backgroundSize: "420px",
+        }}
         aria-hidden="true"
       />
 
@@ -49,31 +52,33 @@ export function HeroSection() {
         )}
       >
         <div className="relative z-10 max-w-xl 2xl:max-w-2xl">
-          <Eyebrow lines={["Jelajahi"]} align="left" />
-          <h1 id="judul-hero" className="mt-4 font-serif font-bold leading-[1.02] text-sogan-900">
-            <span className="block text-[2.6rem] min-[400px]:text-5xl sm:text-6xl xl:text-[4.25rem]">KEINDAHAN</span>
-            <span className="block text-[2.6rem] min-[400px]:text-5xl sm:text-6xl xl:text-[4.25rem]">
-              <span className="font-medium italic text-kunyit">&amp;</span> BUDAYA
-            </span>
-            <TextHighlighter
-              as="span"
-              className="mt-4 inline-block"
-              triggerType="inView"
-              direction="ltr"
-              rounded="rounded-md"
-              transition={{ type: "spring", duration: 1.1, delay: 0.35 }}
-              highlightColor="linear-gradient(100deg, var(--color-kunyit) 0%, #f6a85a 55%, var(--color-kunyit-soft) 100%)"
-              useInViewOptions={{ once: true, initial: false, amount: 0.3 }}
-            >
-              <span className="block px-2 py-1 text-[1.35rem] tracking-[0.04em] text-sogan-900 min-[400px]:text-2xl sm:text-3xl sm:tracking-[0.06em] xl:text-[2.1rem]">
-                DESA WISATA LEREP
+          {/* Lebar pembatas mengikuti lebar judul (w-fit): dari tepi kiri sampai kanan teks. */}
+          <div className="w-fit max-w-full">
+            <h1 id="judul-hero" className="font-serif font-bold leading-[1.02] text-sogan-900">
+              <span className="block text-[2.6rem] min-[400px]:text-5xl sm:text-6xl xl:text-[4.25rem]">KEINDAHAN</span>
+              <span className="block text-[2.6rem] min-[400px]:text-5xl sm:text-6xl xl:text-[4.25rem]">
+                <span className="font-medium italic text-kunyit">&amp;</span> BUDAYA
               </span>
-            </TextHighlighter>
-          </h1>
-          <OrnamentDivider align="left" className="mt-5 w-64" />
+              <TextHighlighter
+                as="span"
+                className="mt-4 inline-block"
+                triggerType="inView"
+                direction="ltr"
+                rounded="rounded-md"
+                transition={{ type: "spring", duration: 1.1, delay: 0.35 }}
+                highlightColor="linear-gradient(100deg, var(--color-kunyit) 0%, #f6a85a 55%, var(--color-kunyit-soft) 100%)"
+                useInViewOptions={{ once: true, initial: false, amount: 0.3 }}
+              >
+                <span className="block px-2 py-1 text-[1.35rem] tracking-[0.04em] text-sogan-900 min-[400px]:text-2xl sm:text-3xl sm:tracking-[0.06em] xl:text-[2.1rem]">
+                  DESA WISATA LEREP
+                </span>
+              </TextHighlighter>
+            </h1>
+            <OrnamenPembatas motif="garis" tone="ornamen" align="left" className="mt-6 w-full sm:w-full" />
+          </div>
           <p className="mt-5 max-w-lg text-[0.95rem] leading-relaxed text-tinta sm:text-base">
-            Nikmati harmoni sejuknya alam lereng Gunung Ungaran, kehangatan tradisi lokal Jawa, kuliner tempo doeloe
-            Pasar Sadon, dan pesona kearifan budaya warga desa.
+            Nikmati harmoni sejuknya alam lereng Gunung Ungaran, kehangatan tradisi lokal Jawa, kuliner tempo doeloe Pasar Sadon, dan pesona
+            kearifan budaya warga desa.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
@@ -93,16 +98,22 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Gunungan sebagai tokoh visual */}
-        <div className="pointer-events-none relative hidden h-full lg:block" aria-hidden="true">
-          <Image
-            src="/images/gunungan.png"
-            alt=""
-            width={616}
-            height={945}
-            priority
-            className="absolute left-[8%] top-1/2 h-[92%] w-auto xl:left-[-14%] xl:h-[112%] -translate-y-1/2 opacity-60 drop-shadow-[0_20px_40px_rgba(54,32,13,0.45)]"
-          />
+        {/* Gunungan sebagai tokoh visual + indikator foto tepat di bawahnya (simetris di sumbu gunungan) */}
+        <div className="pointer-events-none relative hidden h-full lg:block">
+          <div className="absolute -top-6 bottom-[-4.6rem] left-[6%] aspect-[616/1010] xl:left-[-8%]">
+            <div className="absolute inset-x-0 bottom-12 top-0">
+              <Image
+                src="/images/gunungan.png"
+                alt=""
+                fill
+                priority
+                sizes="(min-width: 1280px) 30vw, 36vw"
+                aria-hidden="true"
+                className="object-contain object-bottom opacity-60 drop-shadow-[0_20px_40px_rgba(54,32,13,0.45)]"
+              />
+            </div>
+            <div id="hero-titik" className="pointer-events-auto absolute inset-x-0 bottom-0 flex h-10 items-center justify-center" />
+          </div>
         </div>
       </div>
 

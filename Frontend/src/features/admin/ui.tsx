@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
-import { CornerOrnament } from "@/components/ornament/Ornaments";
+import { CardCorners, Eyebrow } from "@/components/ornament/Ornaments";
 import type { ComplaintStatus, ContentStatus, RequestStatus } from "@/data/admin-dummy";
 import { cn } from "@/lib/utils";
 
@@ -93,7 +93,7 @@ export function PageHeader({
             ))}
           </ol>
         </nav>
-        <p className="font-serif text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-kunyit-600">◆ {eyebrow}</p>
+        <Eyebrow lines={[eyebrow]} align="left" />
         <h1 className="mt-1 font-serif text-2xl font-bold text-sogan-900 sm:text-3xl">{title}</h1>
         {description && <p className="mt-1.5 max-w-2xl text-sm text-tinta/80">{description}</p>}
       </div>
@@ -120,9 +120,9 @@ export function Panel({
   ornament?: boolean;
 }) {
   return (
-    <section className={cn("relative overflow-hidden rounded-2xl border border-emas-soft bg-white/70 shadow-kartu", className)}>
+    <section className={cn("relative isolate overflow-hidden rounded-2xl border border-emas-soft bg-white/70 shadow-kartu", className)}>
       <div className="pita-batik h-1.5" aria-hidden="true" />
-      {ornament && <CornerOrnament position="br" className="size-7" />}
+      {ornament && <CardCorners tl={{ className: "top-1.5" }} />}
       {(title || actions) && (
         <div className="flex flex-wrap items-start justify-between gap-3 border-b border-emas-soft/70 px-5 py-4">
           <div>

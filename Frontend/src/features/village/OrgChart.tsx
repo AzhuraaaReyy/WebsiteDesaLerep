@@ -1,4 +1,4 @@
-import { CornerOrnament } from "@/components/ornament/Ornaments";
+import { CardCorners } from "@/components/ornament/Ornaments";
 import type { Pejabat } from "@/data/dummy";
 import { struktur } from "@/data/dummy";
 import { cn } from "@/lib/utils";
@@ -26,12 +26,11 @@ function KartuPejabat({ p, size = "md", tone = "default" }: { p: Pejabat; size?:
     >
       <div
         className={cn(
-          "relative flex h-full flex-col items-center rounded-xl border border-emas-soft text-center",
+          "relative isolate flex h-full flex-col items-center overflow-hidden rounded-xl border border-emas-soft text-center",
           size === "lg" ? "px-6 pb-6 pt-7" : size === "md" ? "px-4 pb-5 pt-5" : "px-3 pb-4 pt-4",
         )}
       >
-        {size !== "sm" && <CornerOrnament position="tl" className="size-6" />}
-        {size !== "sm" && <CornerOrnament position="br" className="size-6" />}
+        <CardCorners size="sm" className={size === "sm" ? "size-8" : undefined} />
         <div
           className={cn(
             "grid shrink-0 place-items-center overflow-hidden rounded-full border-[3px] bg-mori-2 font-serif font-bold text-sogan/70 ring-4 ring-mori",
@@ -66,7 +65,7 @@ function Konektor({ className }: { className?: string }) {
 
 function JudulKelompok({ children }: { children: string }) {
   return (
-    <p className="mb-4 text-center font-serif text-xs font-semibold uppercase tracking-[0.25em] text-kunyit-600">{children}</p>
+    <p className="mb-4 text-center text-xs font-semibold uppercase tracking-[0.14em] text-kunyit-700">{children}</p>
   );
 }
 

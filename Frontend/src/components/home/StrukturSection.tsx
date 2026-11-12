@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { CornerOrnament, SectionHeading } from "@/components/ornament/Ornaments";
+import { CardCorners, SectionHeading } from "@/components/ornament/Ornaments";
 import { aparatur } from "@/data/site";
 
 function inisial(nama: string) {
@@ -39,9 +39,8 @@ export function StrukturSection() {
               key={a.name}
               className="group relative rounded-2xl border-2 border-sogan/70 bg-mori p-1.5 shadow-kartu transition duration-300 hover:-translate-y-1"
             >
-              <div className="relative rounded-xl border border-emas-soft px-4 pb-7 pt-8 text-center sm:px-6">
-                <CornerOrnament position="tl" />
-                <CornerOrnament position="br" />
+              <div className="relative isolate overflow-hidden rounded-xl border border-emas-soft px-4 pb-7 pt-8 text-center sm:px-6">
+                <CardCorners />
                 <div className="mx-auto grid size-24 place-items-center sm:size-28 overflow-hidden rounded-full border-[3px] border-kunyit bg-mori-2 ring-4 ring-mori">
                   {a.photo ? (
                     <Image src={a.photo} alt={`Foto ${a.name}`} width={112} height={112} className="size-full object-cover" />

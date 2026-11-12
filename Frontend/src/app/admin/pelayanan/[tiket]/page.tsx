@@ -88,10 +88,9 @@ export default async function DetailPermohonanPage({ params }: { params: Promise
           </Panel>
 
           <Panel title="Riwayat Status" description="Append-only · catatan publik terlihat oleh pemohon di halaman pelacakan">
-            <ol className="relative space-y-5 border-l-2 border-emas pl-6">
+            <ol className="-my-4 divide-y divide-emas-soft/70">
               {r.history.map((h) => (
-                <li key={h.at} className="relative">
-                  <span className="absolute -left-[1.95rem] top-0.5 size-3.5 rounded-full border-2 border-white bg-kunyit" aria-hidden="true" />
+                <li key={h.at} className="py-4">
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge {...requestStatus[h.to]} />
                     <span className={cn("rounded-full px-2 py-0.5 text-[0.62rem] font-semibold", h.isPublic ? "bg-tosca/12 text-[#0d6b5f]" : "bg-mori-3/70 text-tinta")}>

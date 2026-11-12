@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AlertTriangle, ArrowRight, Bell, Info } from "lucide-react";
-import { CornerOrnament } from "@/components/ornament/Ornaments";
+import { CardCorners } from "@/components/ornament/Ornaments";
 import { MotifImage } from "@/components/ornament/MotifImage";
 import { CARD, DummyNotice, Section } from "@/components/shared/Blocks";
 import { PageHero } from "@/components/shared/PageHero";
@@ -44,9 +44,9 @@ export default function BeritaPage() {
 
       <Section id="terbaru" eyebrow={["Kabar", "Terbaru Desa"]} title="Berita Terbaru" tone="tekstur">
         <article className={cn(CARD, "group grid overflow-hidden md:grid-cols-2")}>
+          <CardCorners layer="depan" tl={{ tone: "terang" }} />
           <MotifImage alt={utama.judul} motif={utama.motif} className="aspect-[16/10] md:aspect-auto md:h-full md:min-h-72" />
           <div className="relative flex flex-col justify-center p-6 sm:p-8">
-            <CornerOrnament position="tr" />
             <p className="font-serif text-xs font-semibold uppercase tracking-[0.18em] text-kunyit-600">
               Berita Utama · {utama.kategori}
             </p>

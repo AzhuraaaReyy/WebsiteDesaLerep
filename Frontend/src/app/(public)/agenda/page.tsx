@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Clock, MapPin } from "lucide-react";
-import { CornerOrnament } from "@/components/ornament/Ornaments";
+import { CardCorners } from "@/components/ornament/Ornaments";
 import { CARD, DummyNotice, Section } from "@/components/shared/Blocks";
 import { PageHero } from "@/components/shared/PageHero";
 import { agendaArsip, agendaList } from "@/data/dummy";
@@ -26,7 +26,7 @@ export default function AgendaPage() {
         <div className="grid gap-5 md:grid-cols-2">
           {agendaList.map((a) => (
             <article key={a.judul} className={cn(CARD, "flex gap-5 p-5 hover:-translate-y-1 sm:p-6")}>
-              <CornerOrnament position="br" />
+              <CardCorners />
               <time className="grid h-20 w-16 shrink-0 place-items-center rounded-xl bg-sogan-900 text-center text-mori shadow-md">
                 <span>
                   <span className="block text-2xl font-bold leading-none">{a.tanggal}</span>

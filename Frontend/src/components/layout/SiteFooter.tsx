@@ -2,7 +2,15 @@ import { asset } from "@/lib/asset";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight, Clock, Mail, MapPin, Phone, Star } from "lucide-react";
+import { IkonFacebook, IkonInstagram, IkonWhatsApp, IkonYoutube, type IkonMerek } from "@/components/icons/brand";
 import { footerLinks, siteConfig } from "@/data/site";
+
+const IKON_SOSMED: Record<string, IkonMerek> = {
+  Facebook: IkonFacebook,
+  Instagram: IkonInstagram,
+  YouTube: IkonYoutube,
+  WhatsApp: IkonWhatsApp,
+};
 
 function KolomTautan({ title, links }: { title: string; links: { label: string; href: string }[] }) {
   return (
@@ -29,7 +37,10 @@ export function SiteFooter() {
       <div className="pita-batik h-3 border-y border-black/30" aria-hidden="true" />
       <div
         className="absolute inset-0 -z-10 opacity-[0.12] mix-blend-luminosity"
-        style={{ backgroundImage: `url(${asset("/images/batik.jpg")})`, backgroundSize: "520px" }}
+        style={{
+          backgroundImage: `url(${asset("/images/batik.jpg")})`,
+          backgroundSize: "520px",
+        }}
         aria-hidden="true"
       />
       <Image
@@ -43,13 +54,27 @@ export function SiteFooter() {
 
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr_1.25fr] lg:px-8">
         <div>
+          {/* Logo desa & lambang kabupaten — dua ubin seukuran agar seimbang */}
+          <ul className="mb-6 flex items-start gap-4" aria-label="Logo resmi">
+            {[
+              { src: "/images/logo-dwl-kecil.webp", alt: "Logo Desa Wisata Lerep", w: 410, h: 237, kelas: "h-11 w-auto", label: "Desa Lerep" },
+              { src: "/images/logo-kab-semarang.webp", alt: "Lambang Kabupaten Semarang", w: 234, h: 300, kelas: "h-16 w-auto", label: "Kab. Semarang" },
+            ].map((l) => (
+              <li key={l.src} className="flex flex-col items-center gap-2">
+                <span className="grid size-20 place-items-center rounded-2xl bg-mori shadow-[0_10px_24px_-12px_rgb(0_0_0/0.7)] ring-2 ring-kunyit/60 transition-transform duration-300 hover:-translate-y-0.5">
+                  <Image src={l.src} alt={l.alt} width={l.w} height={l.h} className={l.kelas} />
+                </span>
+                <span className="text-[0.62rem] font-bold uppercase tracking-[0.14em] text-kunyit-soft">{l.label}</span>
+              </li>
+            ))}
+          </ul>
           <p className="font-serif text-2xl font-bold tracking-wide">DESA WISATA LEREP</p>
           <p className="mt-3 inline-block rounded border border-kunyit/70 px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-[0.18em] text-kunyit-soft">
             Desa Wisata Berkelanjutan
           </p>
           <p className="mt-4 text-sm leading-relaxed text-mori/80">
-            Destinasi desa wisata berbasis kebudayaan, agrowisata, dan kearifan lokal lereng Gunung Ungaran. Dikelola
-            berkelanjutan oleh Pokdarwis Gerbang Lentera &amp; Pemerintah Desa Lerep.
+            Destinasi desa wisata berbasis kebudayaan, agrowisata, dan kearifan lokal lereng Gunung Ungaran. Dikelola berkelanjutan oleh
+            Pokdarwis Gerbang Lentera &amp; Pemerintah Desa Lerep.
           </p>
           <p className="mt-5 flex items-center gap-2 text-sm font-semibold text-kunyit-soft">
             <Star className="size-4" /> Didukung: Program CSR PLN Peduli
@@ -84,29 +109,29 @@ export function SiteFooter() {
             </p>
           </address>
           <ul className="mt-6 flex gap-3" aria-label="Media sosial">
-            {siteConfig.socials.map((s) => (
-              <li key={s.label}>
-                <a
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={s.name}
-                  className="grid size-10 place-items-center rounded-full border-2 border-kunyit-soft/70 text-xs font-bold text-mori transition hover:border-kunyit hover:bg-kunyit"
-                >
-                  {s.label}
-                </a>
-              </li>
-            ))}
+            {siteConfig.socials.map((s) => {
+              const Ikon = IKON_SOSMED[s.name];
+              return (
+                <li key={s.label}>
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={s.name}
+                    className="grid size-11 place-items-center rounded-full border-2 border-kunyit-soft/70 text-mori transition-[background-color,border-color,translate] duration-200 hover:-translate-y-0.5 hover:border-kunyit hover:bg-kunyit focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-kunyit/70"
+                  >
+                    {Ikon ? <Ikon className="size-[1.15rem]" aria-hidden="true" /> : <span className="text-xs font-bold">{s.label}</span>}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>
 
       <div className="border-t border-emas/25">
-        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 text-xs text-mori/70 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
-          <p>
-            © {year} Pemerintah Desa Wisata Lerep &amp; Pokdarwis Gerbang Lentera. Seluruh Hak Cipta Dilindungi
-            Undang-Undang.
-          </p>
+        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 text-xs text-mori/70 sm:px-6 md:flex-row md:items-center md:justify-between pb-24 sm:pb-28 md:pb-24 lg:px-8">
+          <p>© {year} Pemerintah Desa Wisata Lerep &amp; Pokdarwis Gerbang Lentera. Seluruh Hak Cipta Dilindungi Undang-Undang.</p>
           <p className="font-semibold text-kunyit-soft">Harmoni Alam • Warisan Tradisi • Kearifan Budaya Jawa</p>
         </div>
       </div>

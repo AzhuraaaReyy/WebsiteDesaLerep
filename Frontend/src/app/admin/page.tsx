@@ -164,10 +164,9 @@ export default function AdminHome() {
           </Link>
         }
       >
-        <ol className="relative space-y-4 border-l-2 border-emas-soft pl-6">
+        <ol className="-my-3 divide-y divide-emas-soft/70">
           {auditLogs.slice(0, 5).map((a) => (
-            <li key={a.at + a.action} className="relative">
-              <span className="absolute -left-[1.95rem] top-1 size-3.5 rounded-full border-2 border-white bg-kunyit" aria-hidden="true" />
+            <li key={a.at + a.action} className="py-3">
               <p className="text-sm text-sogan-900">{a.desc}</p>
               <p className="mt-0.5 text-xs text-tinta/60">
                 {a.at} · {a.user} · <code className="rounded bg-mori-2 px-1 py-0.5 text-[0.68rem]">{a.action}</code>

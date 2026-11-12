@@ -63,7 +63,7 @@ export const mainNav: NavItem[] = [
     href: "/pelayanan",
     children: [
       { label: "Katalog Layanan", href: "/pelayanan#katalog", description: "Persyaratan dan SOP layanan" },
-      { label: "Ajukan Layanan", href: "/pelayanan#ajukan" },
+      { label: "Ajukan Layanan", href: "/pelayanan#ajukan", description: "Persyaratan resmi & admin GisaLerep" },
       { label: "Lacak Pengajuan", href: "/pelayanan#lacak", description: "Pakai nomor tiket & kode verifikasi" },
       { label: "Pengaduan", href: "/pelayanan#pengaduan" },
       { label: "Aspirasi", href: "/pelayanan#aspirasi" },
