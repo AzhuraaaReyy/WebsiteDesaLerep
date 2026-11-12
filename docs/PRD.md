@@ -7,7 +7,7 @@
 | Nama Produk          | Website Desa Lerep                                                   |
 | Versi Dokumen        | 1.1 – Final (Sinkronisasi)                                           |
 | Status               | Final – Scope Locked                                                 |
-| Tanggal              | 8 November 2026 (revisi sinkronisasi 10 dan 11 November 2026)        |
+| Tanggal              | 8 November 2026 (revisi sinkronisasi 10, 11, dan 12 November 2026)   |
 | Dokumen Terkait      | ARCHITECTURE.md v1.2, SCHEMA.md v1.9.2-review                        |
 | Periode Pengembangan | 7–22 November 2026                                                   |
 | Lokasi               | Desa Lerep, Kecamatan Ungaran Barat, Kabupaten Semarang, Jawa Tengah |
@@ -226,6 +226,14 @@ Setiap layanan diklasifikasikan menjadi:
 - Layanan fasilitasi Desa.
 - Layanan rujukan ke instansi terkait.
 
+Ketentuan klasifikasi tahap evaluasi (revisi 12 November 2026; dikoreksi bila pemerintah desa menetapkan lain):
+
+- **Layanan langsung:** diselesaikan di kantor desa.
+- **Layanan fasilitasi:** desa menerbitkan surat keterangan, lalu proses berlanjut ke kecamatan, dinas, atau instansi lain.
+- **Layanan rujukan:** diurus langsung di instansi lain. Website menampilkan persyaratan dan tautan instansi, tetapi tidak menerima pengajuan.
+
+Katalog awal berisi layanan surat keterangan sesuai Standar Pelayanan Desa Lerep yang terpasang di kantor desa, ditambah layanan administrasi kependudukan Disdukcapil Kabupaten Semarang sebagai layanan rujukan. Aplikasi pelayanan lain yang sudah dipakai desa (misalnya SMARD) merupakan pengembangan terpisah dan tidak diintegrasikan pada tahap evaluasi.
+
 ### 5.4.2 Informasi Layanan
 
 Setiap layanan dapat memiliki:
@@ -256,7 +264,7 @@ Alur pengajuan:
 9. Admin pemegang mandat persetujuan yang berlaku memberikan persetujuan atau penolakan (lihat §5.4.6).
 10. Dokumen hasil layanan disampaikan kepada pemohon.
 
-Setiap layanan dapat memiliki konfigurasi formulir dan persyaratan yang berbeda.
+Setiap layanan dapat memiliki konfigurasi formulir dan persyaratan yang berbeda. Pengajuan online hanya tersedia untuk layanan langsung dan layanan fasilitasi.
 
 ### 5.4.4 Akun Masyarakat
 
@@ -1220,6 +1228,16 @@ Fitur yang belum memungkinkan dikerjakan dalam periode evaluasi tetap menjadi ba
 ---
 
 # 23. RIWAYAT PERUBAHAN
+
+## v1.1 — revisi 12 November 2026 (Katalog dan klasifikasi layanan)
+
+Perubahan dicatat sesuai §20 (koreksi berdasarkan data pihak desa: papan Standar Pelayanan di kantor desa dan leaflet Disdukcapil Kabupaten Semarang) dan menunggu persetujuan tim. Tidak ada fitur baru dan prioritas tidak berubah; klasifikasi rujukan dan tautan instansi sudah ada di §5.4.1–§5.4.2. Keputusan teknis dicatat sebagai ARCHITECTURE AR-28.
+
+| No  | Bagian | Perubahan                                                                                                            | Alasan                                                                  |
+| --- | ------ | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| 13  | §5.4.1 | Menambah ketentuan klasifikasi layanan langsung, fasilitasi, dan rujukan                                             | Klasifikasi wajib di SCHEMA (`service_type`) tetapi belum didefinisikan |
+| 14  | §5.4.1 | Menetapkan cakupan katalog awal (layanan desa dan rujukan Disdukcapil); aplikasi pelayanan lain tidak diintegrasikan | Sesuai Standar Pelayanan yang dipakai desa dan keterangan Carik         |
+| 15  | §5.4.3 | Pengajuan online hanya untuk layanan langsung dan fasilitasi                                                         | Layanan rujukan diproses instansi lain                                  |
 
 ## v1.1 — revisi 11 November 2026 (Sinkronisasi dengan penutupan celah data lapangan)
 

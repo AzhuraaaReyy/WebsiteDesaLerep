@@ -4,9 +4,9 @@
 
 **Lokasi:** Desa Lerep, Kecamatan Ungaran Barat, Kabupaten Semarang, Jawa Tengah  
 **Versi:** 1.2 — Final (Penutupan Celah Data Lapangan)  
-**Tanggal:** 8 November 2026 (revisi sinkronisasi 10 November 2026; ADR AR-21–AR-27 11 November 2026)  
+**Tanggal:** 8 November 2026 (revisi sinkronisasi 10 November 2026; ADR AR-21–AR-27 11 November 2026; ADR AR-28 12 November 2026)  
 **Status:** FINAL — LOCKED  
-**Acuan:** PRD v1.1 Final + 70 Keputusan Arsitektur (Q1–Q70) + AR-01–AR-27 + Sinkronisasi PRD–Architecture–Schema  
+**Acuan:** PRD v1.1 Final + 70 Keputusan Arsitektur (Q1–Q70) + AR-01–AR-28 + Sinkronisasi PRD–Architecture–Schema  
 **Strategi:** Evaluation-First, Production-Ready Later  
 **Target Deployment Evaluasi:** 22 November 2026
 
@@ -891,6 +891,9 @@ Konfigurasi dapat mencakup:
 - Form fields.
 - Jenis dokumen.
 - Ketentuan pengajuan.
+- Jenis layanan (`service_type`): langsung, fasilitasi, atau rujukan (AR-28).
+
+Layanan rujukan bersifat informatif: halaman layanan menampilkan persyaratan dan tautan instansi (`external_reference_url`), dan endpoint pengajuan menolak layanan berjenis rujukan dengan respons validasi (422). Pengajuan hanya diterima untuk layanan aktif berjenis langsung atau fasilitasi (AR-28).
 
 Perubahan konfigurasi layanan tidak boleh mengubah secara diam-diam persyaratan pengajuan lama. Data pengajuan harus mempertahankan informasi persyaratan atau konfigurasi yang digunakan saat pengajuan dibuat.
 
@@ -1748,6 +1751,12 @@ Keputusan tambahan dari penutupan celah data lapangan (11 November 2026). Sumber
 | AR-26 | `budget_records.record_type` dibatasi `pendapatan`, `belanja`, `pembiayaan`; kolom `group_name` menampung kelompok/bidang; rincian baris tetap dicocokkan dengan dokumen APBDes resmi                                                                                                                                                                                                                                                                                                  |
 | AR-27 | Celah lain ditutup tanpa perubahan schema: status fasilitas di `description`; peta resmi berbentuk gambar ditampilkan sebagai gambar, bukan garis Leaflet; paket wisata dan homestay diringkas di deskripsi potensi Desa Wisata Lerep; agenda berhari pasaran diinput per kejadian setelah tanggal pasti didapat; anggaran HOK di deskripsi proyek; riwayat kepala desa di teks sejarah; statistik kunjungan wisata tidak dimodelkan; program kerja dan kegiatan lembaga tetap ditunda |
 
+Keputusan tambahan katalog layanan (12 November 2026). Sumber: papan Standar Pelayanan di kantor desa, leaflet Disdukcapil Kabupaten Semarang, dan keterangan Carik melalui tim riset data. Tidak ada fitur atau tabel baru (PRD §5.4.1–§5.4.3, revisi 12 November). Status: diusulkan tim riset data; berlaku setelah disetujui tim pengembang sesuai §33 dan PRD §20.
+
+| ID    | Keputusan Tambahan                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AR-28 | Klasifikasi `public_services.service_type`: `direct` = diselesaikan di kantor desa; `facilitation` = desa menerbitkan surat keterangan lalu proses berlanjut ke kecamatan, dinas, atau instansi lain; `referral` = diurus langsung di instansi lain. Layanan `referral` wajib memiliki `external_reference_url` (CHECK database) dan tidak menerima pengajuan (backend menolak dengan 422). Katalog awal: layanan surat keterangan desa sesuai Standar Pelayanan yang terpasang di kantor desa, ditambah layanan Disdukcapil Kabupaten Semarang sebagai `referral`. Aplikasi pelayanan lain milik desa tidak diintegrasikan |
+
 ---
 
 # 30. Scope Exclusions
@@ -1808,6 +1817,7 @@ Arsitektur ini ditetapkan berdasarkan:
 - PRD Website Desa Lerep v1.1 Final.
 - Keputusan sinkronisasi AR-11–AR-20 (10 November 2026).
 - Keputusan penutupan celah data lapangan AR-21–AR-27 (11 November 2026).
+- Keputusan katalog layanan AR-28 (12 November 2026).
 - Seluruh keputusan arsitektur Q1–Q70.
 - Hasil PRD–Architecture Consistency Review delapan bagian.
 - Batasan tim tiga orang.
@@ -1832,7 +1842,7 @@ Validasi utama:
 
 Dengan disahkannya dokumen ini:
 
-1. `ARCHITECTURE.md` ditetapkan sebagai dokumen arsitektur final versi 1.2 (revisi sinkronisasi melalui ADR AR-11–AR-20 dan penutupan celah data lapangan melalui ADR AR-21–AR-27).
+1. `ARCHITECTURE.md` ditetapkan sebagai dokumen arsitektur final versi 1.2 (revisi sinkronisasi melalui ADR AR-11–AR-20 dan penutupan celah data lapangan melalui ADR AR-21–AR-27; katalog layanan melalui ADR AR-28).
 2. Seluruh keputusan Q1–Q70 menjadi acuan teknis implementasi.
 3. Keputusan tambahan hasil audit menjadi bagian resmi arsitektur.
 4. PRD v1.1 tetap menjadi sumber utama kebutuhan dan ruang lingkup produk.
@@ -1848,6 +1858,6 @@ Website Desa Lerep menggunakan arsitektur Modular Monolith dengan frontend Next.
 Arsitektur ini menjadi fondasi implementasi tahap evaluasi sekaligus menyediakan ruang pengembangan untuk kebutuhan website desa jangka panjang.
 
 **Dokumen: ARCHITECTURE.md**  
-**Versi: 1.2 Final (sinkronisasi 10 November 2026; ADR AR-21–AR-27 11 November 2026)**  
+**Versi: 1.2 Final (sinkronisasi 10 November 2026; ADR AR-21–AR-27 11 November 2026; ADR AR-28 12 November 2026)**  
 **Status: LOCKED**  
 **Tanggal Penguncian: 8 November 2026**
