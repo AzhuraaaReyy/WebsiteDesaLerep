@@ -17,7 +17,7 @@ export function GisaLayanan() {
       <div className="relative isolate overflow-hidden rounded-[1.75rem] border-2 border-ornamen bg-ornamen px-6 py-7 text-mori shadow-[0_24px_60px_-28px_rgb(86_47_0/0.8)] animate-in fade-in slide-in-from-bottom-4 duration-700 sm:px-9 sm:py-8">
         <div
           className="absolute inset-0 -z-10 opacity-[0.13] mix-blend-screen"
-          style={{ backgroundImage: `url(${asset("/images/batik.jpg")})`, backgroundSize: "380px" }}
+          style={{ backgroundImage: `url(${asset("/images/batik.webp")})`, backgroundSize: "380px" }}
           aria-hidden="true"
         />
         <div className="absolute -left-16 -top-24 -z-10 size-72 rounded-full bg-jingga/25 blur-3xl" aria-hidden="true" />

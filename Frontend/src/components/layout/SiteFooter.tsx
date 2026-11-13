@@ -38,7 +38,7 @@ export function SiteFooter() {
       <div
         className="absolute inset-0 -z-10 opacity-[0.12] mix-blend-luminosity"
         style={{
-          backgroundImage: `url(${asset("/images/batik.jpg")})`,
+          backgroundImage: `url(${asset("/images/batik.webp")})`,
           backgroundSize: "520px",
         }}
         aria-hidden="true"

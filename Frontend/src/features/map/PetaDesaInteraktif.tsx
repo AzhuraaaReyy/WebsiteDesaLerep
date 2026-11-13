@@ -206,7 +206,7 @@ export function PetaDesaInteraktif() {
         <div
           className="absolute inset-0 -z-10 opacity-[0.12] mix-blend-screen"
           style={{
-            backgroundImage: `url(${asset("/images/batik.jpg")})`,
+            backgroundImage: `url(${asset("/images/batik.webp")})`,
             backgroundSize: "360px",
           }}
           aria-hidden="true"

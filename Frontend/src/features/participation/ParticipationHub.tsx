@@ -107,7 +107,7 @@ export function ParticipationHub() {
               {/* Tekstur batik + cahaya */}
               <span
                 className={cn("absolute inset-0 -z-10", gelap ? "opacity-[0.13] mix-blend-screen" : "opacity-[0.07] mix-blend-multiply")}
-                style={{ backgroundImage: `url(${asset("/images/batik.jpg")})`, backgroundSize: "340px" }}
+                style={{ backgroundImage: `url(${asset("/images/batik.webp")})`, backgroundSize: "340px" }}
                 aria-hidden="true"
               />
               <span

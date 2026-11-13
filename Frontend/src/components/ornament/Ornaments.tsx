@@ -2,7 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 /**
- * Pembatas ulir di bawah judul (aset `ornamen-pembatas.png`, dipakai sebagai mask
+ * Pembatas ulir di bawah judul (aset `ornamen-pembatas.webp`, dipakai sebagai mask
  * sehingga warnanya mengikuti `currentColor`).
  */
 const pembatasVariants = cva("block", {
@@ -19,7 +19,7 @@ export function OrnamenPembatas({ className, motif, align, tone }: { className?:
 }
 
 /**
- * Ornamen sudut emas (aset `ornamen-sudut.png`). Gambar aslinya mengisi pojok kanan-bawah;
+ * Ornamen sudut emas (aset `ornamen-sudut.webp`). Gambar aslinya mengisi pojok kanan-bawah;
  * pojok lain didapat dengan memutar/mencerminkan.
  */
 const sudutVariants = cva("ornamen-sudut pointer-events-none absolute", {

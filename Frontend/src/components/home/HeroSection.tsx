@@ -39,7 +39,7 @@ export function HeroSection() {
       <div
         className="absolute inset-y-0 left-0 -z-10 w-full opacity-[0.07] [mask-image:linear-gradient(to_right,black_45%,transparent)] lg:w-3/5"
         style={{
-          backgroundImage: `url(${asset("/images/batik.jpg")})`,
+          backgroundImage: `url(${asset("/images/batik.webp")})`,
           backgroundSize: "420px",
         }}
         aria-hidden="true"

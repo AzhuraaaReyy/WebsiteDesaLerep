@@ -66,7 +66,7 @@ function IsiPenampil({ dokumen, onClose }: { dokumen: DokumenLayanan; onClose: (
       <header className="relative isolate flex items-center gap-3 overflow-hidden bg-ornamen px-4 pb-5 pt-3.5 text-mori sm:gap-4 sm:px-6">
         <div
           className="absolute inset-0 -z-10 opacity-[0.12] mix-blend-screen"
-          style={{ backgroundImage: `url(${asset("/images/batik.jpg")})`, backgroundSize: "360px" }}
+          style={{ backgroundImage: `url(${asset("/images/batik.webp")})`, backgroundSize: "360px" }}
           aria-hidden="true"
         />
         <span className="hidden size-10 shrink-0 place-items-center rounded-xl bg-jingga text-ornamen sm:grid">

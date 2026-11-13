@@ -64,32 +64,32 @@ body {
 
 /* Pita motif batik (border horizontal) — dipakai di header, footer, kartu. */
 .pita-batik {
-  background-image: url("../../public/images/border-batik-h.jpg");
+  background-image: url("../../public/images/border-batik-h.webp");
   background-repeat: repeat-x;
   background-size: auto 100%;
   background-position: center;
 }
 
 .ornamen-pembatas {
-  mask: url("../../public/images/ornamen-pembatas.png") center / contain no-repeat;
-  -webkit-mask: url("../../public/images/ornamen-pembatas.png") center / contain no-repeat;
+  mask: url("../../public/images/ornamen-pembatas.webp") center / contain no-repeat;
+  -webkit-mask: url("../../public/images/ornamen-pembatas.webp") center / contain no-repeat;
   background-color: currentColor;
 }
 
 .ornamen-garis {
-  mask: url("../../public/images/ornamen-garis.png") center / contain no-repeat;
-  -webkit-mask: url("../../public/images/ornamen-garis.png") center / contain no-repeat;
+  mask: url("../../public/images/ornamen-garis.webp") center / contain no-repeat;
+  -webkit-mask: url("../../public/images/ornamen-garis.webp") center / contain no-repeat;
   background-color: currentColor;
 }
 
 .ornamen-sudut {
-  mask: url("../../public/images/ornamen-sudut.png") center / contain no-repeat;
-  -webkit-mask: url("../../public/images/ornamen-sudut.png") center / contain no-repeat;
+  mask: url("../../public/images/ornamen-sudut.webp") center / contain no-repeat;
+  -webkit-mask: url("../../public/images/ornamen-sudut.webp") center / contain no-repeat;
   background-color: currentColor;
 }
 
 .pita-kembang {
-  background-image: url("../../public/images/border-floral-h.jpg");
+  background-image: url("../../public/images/border-floral-h.webp");
   background-repeat: repeat-x;
   background-size: auto 100%;
   background-position: center;

@@ -17,7 +17,7 @@ export function PageHero({ eyebrow, title, description }: { eyebrow: string; tit
       {/* Tekstur batik tipis */}
       <div
         className="absolute inset-0 -z-20 opacity-[0.07] mix-blend-multiply [mask-image:linear-gradient(to_right,black_0%,black_45%,transparent_80%)]"
-        style={{ backgroundImage: `url(${asset("/images/batik.jpg")})`, backgroundSize: "1100px" }}
+        style={{ backgroundImage: `url(${asset("/images/batik.webp")})`, backgroundSize: "1100px" }}
         aria-hidden="true"
       />
 

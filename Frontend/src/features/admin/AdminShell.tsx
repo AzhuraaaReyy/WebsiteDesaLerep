@@ -70,7 +70,7 @@ function Sidebar({ pathname, onNavigate }: { pathname: string; onNavigate?: () =
     <div className="relative flex h-full flex-col overflow-hidden bg-sogan-900 text-mori">
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.1] mix-blend-luminosity"
-        style={{ backgroundImage: `url(${asset("/images/batik.jpg")})`, backgroundSize: "380px" }}
+        style={{ backgroundImage: `url(${asset("/images/batik.webp")})`, backgroundSize: "380px" }}
         aria-hidden="true"
       />
       <div className="relative flex items-center gap-3 px-5 pb-5 pt-6">

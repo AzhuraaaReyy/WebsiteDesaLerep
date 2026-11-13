@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   description:
     "Website resmi Desa Wisata Lerep, Kecamatan Ungaran Barat, Kabupaten Semarang. Profil desa, destinasi wisata budaya, agenda, dan layanan warga.",
-  icons: { icon: asset("/images/logo-mark.png") },
+  icons: { icon: asset("/images/logo-mark-64.png") },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

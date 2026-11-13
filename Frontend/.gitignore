@@ -30,3 +30,6 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# gambar responsif hasil scripts/optimize-images.mjs (dibuat saat build GitHub Pages)
+/public/_img/

@@ -100,7 +100,7 @@ export function SuccessDialog({ bukti, onClose }: { bukti: DataBukti | null; onC
           <div className="relative isolate overflow-hidden bg-ornamen px-6 pb-9 pt-8 text-center text-mori">
             <div
               className="absolute inset-0 -z-10 opacity-[0.12] mix-blend-screen"
-              style={{ backgroundImage: `url(${asset("/images/batik.jpg")})`, backgroundSize: "360px" }}
+              style={{ backgroundImage: `url(${asset("/images/batik.webp")})`, backgroundSize: "360px" }}
               aria-hidden="true"
             />
             <div className="flex justify-center">

@@ -310,7 +310,7 @@ export function ParticipationForm({ jenis, onTutup }: { jenis: Jenis; onTutup: (
       <header className="relative isolate overflow-hidden bg-ornamen px-5 pb-8 pt-6 text-mori sm:px-8">
         <div
           className="absolute inset-0 -z-10 opacity-[0.12] mix-blend-screen"
-          style={{ backgroundImage: `url(${asset("/images/batik.jpg")})`, backgroundSize: "380px" }}
+          style={{ backgroundImage: `url(${asset("/images/batik.webp")})`, backgroundSize: "380px" }}
           aria-hidden="true"
         />
         <div className="absolute -right-10 -top-16 -z-10 size-56 rounded-full bg-jingga/25 blur-2xl" aria-hidden="true" />
