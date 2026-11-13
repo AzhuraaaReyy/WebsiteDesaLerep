@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import type L from "leaflet";
 import { ArrowUpRight, Focus, LocateFixed, Map as IkonPeta, MapPin, Minus, MousePointerClick, Plus, Satellite, X } from "lucide-react";
@@ -23,6 +23,30 @@ const PetaLeaflet = dynamic(() => import("./PetaLeaflet"), {
 });
 
 const SEMUA = new Set(Object.keys(KATEGORI) as KategoriTitik[]);
+
+/**
+ * true setelah elemen berada ±1 layar dari viewport (lalu tetap true). Dipakai agar Leaflet, GeoJSON,
+ * dan tile satelit baru diunduh saat pengunjung mendekati peta — bukan saat beranda pertama dibuka.
+ */
+function useDekatLayar<T extends Element>() {
+  const ref = useRef<T>(null);
+  const [dekat, setDekat] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || dekat) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        setDekat(true);
+        io.disconnect();
+      },
+      { rootMargin: "100% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [dekat]);
+  return [ref, dekat] as const;
+}
 
 function Kontrol({ label, onClick, aktif, children }: { label: string; onClick: () => void; aktif?: boolean; children: React.ReactNode }) {
   return (
@@ -99,6 +123,7 @@ export function PetaRingkas() {
   const [terpilih, setTerpilih] = useState<string | null>(null);
   const onSiap = useCallback((m: L.Map) => setPeta(m), []);
   const onBatas = useCallback((d: DataBatas | null) => setBatas(d), []);
+  const [wadah, dekat] = useDekatLayar<HTMLDivElement>();
   const rinci = rincianDari(terpilih);
 
   const kembali = () => {
@@ -115,21 +140,27 @@ export function PetaRingkas() {
   return (
     <div>
       <div
+        ref={wadah}
         id="peta-ringkas"
         className="relative isolate h-[26rem] overflow-hidden rounded-2xl border-[3px] border-ornamen bg-[#1a1006] shadow-kartu sm:h-[30rem]"
       >
-        <PetaLeaflet
-          basemap={basemap}
-          fokus={fokus}
-          ringkas
-          popup={false}
-          kategoriAktif={SEMUA}
-          tampilDusun
-          terpilih={terpilih}
-          onPilih={setTerpilih}
-          onSiap={onSiap}
-          onBatas={onBatas}
-        />
+        {/* Sebelum dekat layar: placeholder yang sama dengan tampilan "memuat" Leaflet. */}
+        {dekat ? (
+          <PetaLeaflet
+            basemap={basemap}
+            fokus={fokus}
+            ringkas
+            popup={false}
+            kategoriAktif={SEMUA}
+            tampilDusun
+            terpilih={terpilih}
+            onPilih={setTerpilih}
+            onSiap={onSiap}
+            onBatas={onBatas}
+          />
+        ) : (
+          <Memuat />
+        )}
 
         <div
           className="absolute left-3 top-3 z-[500] flex rounded-full border-2 border-ornamen/20 bg-mori/95 p-0.5 shadow-lg backdrop-blur"

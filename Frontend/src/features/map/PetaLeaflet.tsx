@@ -240,6 +240,24 @@ function Pengarah({
 }
 
 /**
+ * Menjeda animasi denyut (berulang tanpa henti) selama peta berada di luar layar, agar peramban tidak
+ * menggambar ulang sesuatu yang tidak terlihat. Saat peta kembali terlihat, animasi berlanjut — tampilan sama.
+ */
+function Jeda() {
+  const map = useMap();
+  useEffect(() => {
+    const el = map.getContainer();
+    const io = new IntersectionObserver(([e]) => el.classList.toggle("peta-diam", !e.isIntersecting));
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      el.classList.remove("peta-diam");
+    };
+  }, [map]);
+  return null;
+}
+
+/**
  * Kamera & animasi pembuka: setelah poligon termuat dan peta terlihat di layar, peta "terbang" ke Desa Lerep,
  * lalu bergiliran: penutup luar desa memudar masuk → garis batas tergambar → wilayah dusun muncul → penanda jatuh.
  * Setelah itu tampilan dikunci di sekitar desa.
@@ -429,6 +447,7 @@ export default function PetaLeaflet({
       )}
       <ScaleControl position="bottomleft" imperial={false} />
       <Siap onSiap={onSiap} />
+      <Jeda />
       <Kamera siap={selesaiMuat} batas={batas} ringkas={ringkas} />
       <Pengarah terpilih={terpilih} penanda={penanda} batasDusun={batasDusun} bukaPopup={popup} />
 

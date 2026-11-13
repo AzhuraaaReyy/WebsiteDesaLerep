@@ -370,6 +370,12 @@ body {
     animation: none;
   }
 }
+/* Animasi denyut dijeda selama peta di luar layar (kelas dipasang oleh <Jeda> di PetaLeaflet). */
+.peta-diam .peta-pin--aktif::after,
+.peta-diam .peta-dusun--aktif .peta-dusun__titik,
+.peta-diam .peta-desa::after {
+  animation-play-state: paused;
+}
 
 /* ===== Peta Desa Lerep — fokus batas & animasi pembuka ===== */
 /* Sebelum animasi dimulai, semua lapisan desa disembunyikan. */
