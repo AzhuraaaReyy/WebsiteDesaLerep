@@ -31,13 +31,25 @@ const LEBAR = [16, 32, 48, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200, 192
 const OPSI_FOTO = { quality: 82, effort: 6 };
 const OPSI_ALPHA = { quality: 88, alphaQuality: 100, effort: 6 };
 
-/** Gambar yang dipakai lewat CSS/inline style → versi WebP di samping file asli. */
-const VERSI_CSS = ["batik.jpg", "border-batik-h.jpg", "border-floral-h.jpg", "ornamen-garis.png", "ornamen-pembatas.png", "ornamen-sudut.png"];
+/**
+ * Gambar yang dipakai lewat CSS/inline style → versi WebP di samping file asli (di-commit).
+ * `tinggi` memperkecil gambar bila ukuran tampilnya memang kecil; `opsi` menimpa kualitas bawaan.
+ */
+const VERSI_CSS = [
+  // Satu file untuk semua pemakaian (latar tipis & MotifImage) agar cukup diunduh sekali lalu ter-cache.
+  { sumber: "batik.jpg", keluaran: "batik.webp" },
+  // Pita `.pita-batik` sengaja tetap ukuran asli: versi yang diperkecil mengubah detail motifnya (pola moiré).
+  { sumber: "border-batik-h.jpg", keluaran: "border-batik-h.webp" },
+  { sumber: "border-floral-h.jpg", keluaran: "border-floral-h.webp" },
+  { sumber: "ornamen-garis.png", keluaran: "ornamen-garis.webp" },
+  { sumber: "ornamen-pembatas.png", keluaran: "ornamen-pembatas.webp" },
+  { sumber: "ornamen-sudut.png", keluaran: "ornamen-sudut.webp" },
+];
 
 const EKSTENSI = new Set([".png", ".jpg", ".jpeg", ".webp"]);
 const FAVICON = "logo-mark-64.png";
 /** File turunan buatan script ini — bukan sumber, jadi dilewati. */
-const TURUNAN = new Set([...VERSI_CSS.map((f) => f.replace(/\.[^.]+$/, ".webp")), FAVICON]);
+const TURUNAN = new Set([...VERSI_CSS.map((v) => v.keluaran), FAVICON]);
 
 const ada = (p) => access(p).then(() => true, () => false);
 
@@ -72,15 +84,20 @@ async function main() {
       await sharp(sumber).resize({ width: w, withoutEnlargement: true }).webp(opsi).toFile(target);
       dibuat++;
     }
+  }
 
-    // 3) Versi untuk CSS (ukuran asli, hanya format yang berubah).
-    if (VERSI_CSS.includes(f)) {
-      const target = path.join(SUMBER, `${nama}.webp`);
-      if (!segar || !(await ada(target))) {
-        await sharp(sumber).webp(opsi).toFile(target);
-        dibuat++;
-      }
-    }
+  // 3) Versi untuk CSS — dibuat ulang bila sumber atau pengaturannya berubah.
+  for (const v of VERSI_CSS) {
+    const sumber = path.join(SUMBER, v.sumber);
+    const target = path.join(SUMBER, v.keluaran);
+    const opsi = v.opsi ?? ((await sharp(sumber).metadata()).hasAlpha ? OPSI_ALPHA : OPSI_FOTO);
+    const hash = await sidik(sumber, v, opsi);
+    catatan[`css:${v.keluaran}`] = hash;
+    if (lama[`css:${v.keluaran}`] === hash && (await ada(target))) continue;
+    const gambar = sharp(sumber);
+    if (v.tinggi) gambar.resize({ height: v.tinggi });
+    await gambar.webp(opsi).toFile(target);
+    dibuat++;
   }
 
   // Favicon: logo 387 px → 64 px PNG (favicon tidak perlu lebih besar).

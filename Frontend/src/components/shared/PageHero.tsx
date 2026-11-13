@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { preload } from "react-dom";
 import { ChevronRight } from "lucide-react";
 import { Eyebrow, OrnamenPembatas } from "@/components/ornament/Ornaments";
 import { asset } from "@/lib/asset";
@@ -12,6 +13,9 @@ import { cn } from "@/lib/utils";
  * Elemen pendukung (penjor, burung hong, surya, pita tumpal) bersifat dekoratif — aria-hidden.
  */
 export function PageHero({ eyebrow, title, description }: { eyebrow: string; title: string; description: string }) {
+  // Tekstur latar ini elemen terbesar di layar pertama (LCP); tanpa preload peramban baru menemukannya
+  // setelah CSS & tata letak selesai. Preload hanya mempercepat unduhan — tampilan tidak berubah.
+  preload(asset("/images/batik.webp"), { as: "image", fetchPriority: "high" });
   return (
     <section className="relative isolate overflow-hidden bg-[linear-gradient(100deg,var(--color-jingga-muda)_0%,#ffdcb6_52%,#ffc387_100%)]">
       {/* Tekstur batik tipis */}

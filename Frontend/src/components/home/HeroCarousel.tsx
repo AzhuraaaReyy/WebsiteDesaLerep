@@ -26,6 +26,19 @@ export function HeroCarousel({ slides, interval = 5000 }: { slides: HeroSlide[];
   const [hidden, setHidden] = useState(false);
   const paused = hovered || hidden;
   const [slot, setSlot] = useState<HTMLElement | null>(null);
+  // Foto ke-2 dst. baru dipasang setelah foto pertama (LCP) termuat, agar tidak berebut jaringan.
+  // Sebelum gilirannya foto itu memang tidak terlihat (opacity 0), jadi tampilan tidak berubah.
+  const [muatLanjutan, setMuatLanjutan] = useState(false);
+  useEffect(() => {
+    if (muatLanjutan) return;
+    const siap = () => setMuatLanjutan(true);
+    if (document.readyState === "complete") {
+      const raf = window.requestAnimationFrame(siap);
+      return () => window.cancelAnimationFrame(raf);
+    }
+    window.addEventListener("load", siap, { once: true });
+    return () => window.removeEventListener("load", siap);
+  }, [muatLanjutan]);
 
   // Cari wadah indikator setelah DOM siap; ikuti perubahan lebar layar.
   useEffect(() => {
@@ -121,18 +134,21 @@ export function HeroCarousel({ slides, interval = 5000 }: { slides: HeroSlide[];
               className={cn("absolute inset-0 transition-opacity duration-[1200ms] ease-in-out", active ? "opacity-100" : "opacity-0")}
               aria-hidden={!active}
             >
-              <Image
-                src={s.src}
-                alt={s.alt}
-                fill
-                priority={i === 0}
-                sizes="(min-width: 1024px) 62vw, 100vw"
-                className={cn(
-                  "object-cover transition-transform duration-[6000ms] ease-out motion-reduce:transition-none",
-                  s.position ?? "object-center",
-                  active ? "scale-100" : "scale-110",
-                )}
-              />
+              {(i === 0 || active || muatLanjutan) && (
+                <Image
+                  src={s.src}
+                  alt={s.alt}
+                  fill
+                  priority={i === 0}
+                  onLoad={i === 0 ? () => setMuatLanjutan(true) : undefined}
+                  sizes="(min-width: 1024px) 62vw, 100vw"
+                  className={cn(
+                    "object-cover transition-transform duration-[6000ms] ease-out motion-reduce:transition-none",
+                    s.position ?? "object-center",
+                    active ? "scale-100" : "scale-110",
+                  )}
+                />
+              )}
             </div>
           );
         })}
