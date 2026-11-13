@@ -384,7 +384,8 @@ export default function PetaLeaflet({
   const gelap = basemap === "satelit";
   const lapisan = LAPISAN[basemap];
 
-  const daftarkan = (id: string) => (m: L.Marker | null) => {
+  // Ref hanya disentuh di dalam callback (ref/event), tidak saat render — aturan react-hooks/refs.
+  const daftarkan = (id: string, m: L.Marker | null) => {
     if (m) penanda.current.set(id, m);
     else penanda.current.delete(id);
   };
@@ -392,15 +393,12 @@ export default function PetaLeaflet({
     pilihRef.current = id;
     onPilih(id);
   };
-  const peristiwa = (id: string) => ({
-    click: () => pilih(id),
-    popupclose: () => {
-      if (pilihRef.current === id) {
-        pilihRef.current = null;
-        onPilih(null);
-      }
-    },
-  });
+  const tutupPopup = (id: string) => {
+    if (pilihRef.current === id) {
+      pilihRef.current = null;
+      onPilih(null);
+    }
+  };
 
   return (
     <MapContainer
@@ -530,7 +528,7 @@ export default function PetaLeaflet({
       )}
 
       {/* 5. Penanda */}
-      <Marker position={[desaLerep.lat, desaLerep.lng]} icon={ikonDesa} ref={daftarkan("desa")} eventHandlers={peristiwa("desa")}>
+      <Marker position={[desaLerep.lat, desaLerep.lng]} icon={ikonDesa} ref={(m) => daftarkan("desa", m)} eventHandlers={{ click: () => pilih("desa"), popupclose: () => tutupPopup("desa") }}>
         <Tooltip direction="top" offset={[0, -14]} className="peta-tooltip">
           Titik tengah Desa Lerep
         </Tooltip>
@@ -565,8 +563,8 @@ export default function PetaLeaflet({
               key={id}
               position={[d.lat, d.lng]}
               icon={ikonDusun(d, w, terpilih === id, i)}
-              ref={daftarkan(id)}
-              eventHandlers={peristiwa(id)}
+              ref={(m) => daftarkan(id, m)}
+              eventHandlers={{ click: () => pilih(id), popupclose: () => tutupPopup(id) }}
               zIndexOffset={terpilih === id ? 900 : 0}
               riseOnHover
             >
@@ -587,8 +585,8 @@ export default function PetaLeaflet({
             key={id}
             position={[t.lat, t.lng]}
             icon={ikonTitik(t, aktif, i + dusunPeta.length)}
-            ref={daftarkan(id)}
-            eventHandlers={peristiwa(id)}
+            ref={(m) => daftarkan(id, m)}
+            eventHandlers={{ click: () => pilih(id), popupclose: () => tutupPopup(id) }}
             zIndexOffset={aktif ? 1000 : 100}
             riseOnHover
           >
